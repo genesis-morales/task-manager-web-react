@@ -1,0 +1,544 @@
+// ─── Root ────────────────────────────────────────────────────────────────────
+
+.home {
+  font-family: $font-family;
+  background-color: $secondary-color;
+  color: $text-primary;
+
+  // ─── Shared logo ─────────────────────────────────────────────────────────
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-weight: 700;
+    font-size: $font-size-md;
+    color: $text-primary;
+    cursor: pointer;
+  }
+
+  &__logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: $primary-color;
+    color: $white;
+    border-radius: 50%;
+    font-size: 12px;
+  }
+
+  // ─── Navbar ──────────────────────────────────────────────────────────────
+
+  &__navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: $white;
+    border-bottom: 1px solid $border-color;
+    padding: 0 $spacing-xl;
+  }
+
+  &__navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__nav-links {
+    display: flex;
+    gap: $spacing-xl;
+
+    @media (max-width: $breakpoint-md) {
+      display: none;
+    }
+  }
+
+  &__nav-link {
+    color: $text-secondary;
+    font-size: $font-size-base;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  &__nav-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__nav-login {
+    color: $text-secondary;
+    font-weight: 500;
+  }
+
+  &__nav-cta.ant-btn {
+    background-color: $primary-color;
+    border-radius: $radius-md;
+    font-weight: 600;
+  }
+
+  // ─── Hero ─────────────────────────────────────────────────────────────────
+
+  &__hero {
+    background: linear-gradient(180deg, #eef2ff 0%, $secondary-color 100%);
+    padding: $spacing-xxl $spacing-xl 0;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  &__hero-content {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  &__hero-title.ant-typography {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    color: $text-primary;
+    line-height: 1.2;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__hero-subtitle.ant-typography {
+    font-size: $font-size-md;
+    color: $text-secondary;
+    max-width: 520px;
+    margin: 0 auto $spacing-xl;
+    line-height: 1.7;
+  }
+
+  &__hero-actions {
+    display: flex;
+    gap: $spacing-md;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: $spacing-xxl;
+  }
+
+  &__btn-primary.ant-btn {
+    background-color: $primary-color;
+    border-radius: $radius-md;
+    font-weight: 600;
+    height: 48px;
+    padding: 0 $spacing-xl;
+  }
+
+  &__btn-secondary.ant-btn {
+    border-radius: $radius-md;
+    font-weight: 600;
+    height: 48px;
+    padding: 0 $spacing-xl;
+    border-color: $border-color;
+    color: $text-primary;
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  // ─── Dashboard mockup ────────────────────────────────────────────────────
+
+  &__hero-mockup {
+    max-width: 680px;
+    margin: 0 auto;
+    filter: drop-shadow($shadow-elevated);
+  }
+
+  &__mockup-window {
+    background: $white;
+    border-radius: $radius-lg $radius-lg 0 0;
+    border: 1px solid $border-color;
+    overflow: hidden;
+  }
+
+  &__mockup-bar {
+    background: #f5f5f5;
+    padding: $spacing-sm $spacing-md;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__mockup-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #d9d9d9;
+
+    &:nth-child(1) { background-color: #ff5f57; }
+    &:nth-child(2) { background-color: #febc2e; }
+    &:nth-child(3) { background-color: #28c840; }
+  }
+
+  &__mockup-content {
+    display: flex;
+    height: 260px;
+    overflow: hidden;
+  }
+
+  &__mockup-sidebar {
+    width: 160px;
+    border-right: 1px solid $border-color;
+    padding: $spacing-md;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    flex-shrink: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      display: none;
+    }
+  }
+
+  &__mockup-menu-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: 6px $spacing-sm;
+    border-radius: $radius-sm;
+    cursor: pointer;
+
+    &:hover {
+      background: $secondary-color;
+    }
+
+    &:first-child {
+      background: #eff6ff;
+    }
+  }
+
+  &__mockup-menu-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #d9d9d9;
+    flex-shrink: 0;
+  }
+
+  &__mockup-menu-label {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+  }
+
+  &__mockup-main {
+    flex: 1;
+    padding: $spacing-md;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    overflow: hidden;
+  }
+
+  &__mockup-task-row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  &__mockup-task-check {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid $border-color;
+    flex-shrink: 0;
+  }
+
+  &__mockup-task-text {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // ─── Trusted logos ───────────────────────────────────────────────────────
+
+  &__trusted {
+    background: $white;
+    padding: $spacing-xl $spacing-xl;
+    text-align: center;
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__trusted-label {
+    display: block;
+    font-size: $font-size-sm;
+    color: $text-muted;
+    letter-spacing: 1.5px;
+    margin-bottom: $spacing-lg;
+    font-weight: 500;
+  }
+
+  &__trusted-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-xl;
+    flex-wrap: wrap;
+  }
+
+  &__trusted-logo-placeholder {
+    width: 100px;
+    height: 24px;
+    background-color: #e8e8e8;
+    border-radius: $radius-sm;
+  }
+
+  // ─── Features ────────────────────────────────────────────────────────────
+
+  &__features {
+    background: $secondary-color;
+    padding: $spacing-xxl $spacing-xl;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__features-header {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto $spacing-xxl;
+  }
+
+  &__features-title.ant-typography {
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__features-subtitle.ant-typography {
+    color: $text-secondary;
+    font-size: $font-size-md;
+    line-height: 1.7;
+  }
+
+  &__feature-card.ant-card {
+    background: $white;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-card;
+    height: 100%;
+    transition: box-shadow 0.3s, transform 0.3s;
+
+    &:hover {
+      box-shadow: $shadow-elevated;
+      transform: translateY(-4px);
+    }
+
+    .ant-card-body {
+      padding: 0;
+    }
+  }
+
+  &__feature-icon {
+    width: 44px;
+    height: 44px;
+    background-color: #eff6ff;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: $primary-color;
+    margin-bottom: $spacing-md;
+  }
+
+  &__feature-title.ant-typography {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__feature-description.ant-typography {
+    color: $text-secondary;
+    font-size: $font-size-base;
+    line-height: 1.7;
+  }
+
+  // ─── CTA banner ──────────────────────────────────────────────────────────
+
+  &__cta {
+    background: linear-gradient(135deg, #1677ff 0%, #003eb3 100%);
+    padding: $spacing-xxl $spacing-xl;
+    text-align: center;
+    margin: $spacing-xxl 0 0;
+  }
+
+  &__cta-content {
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  &__cta-title.ant-typography {
+    color: $white;
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 700;
+    margin-bottom: $spacing-md;
+  }
+
+  &__cta-subtitle.ant-typography {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: $font-size-base;
+    line-height: 1.7;
+    margin-bottom: $spacing-xl;
+  }
+
+  &__cta-actions {
+    display: flex;
+    gap: $spacing-md;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__cta-btn-primary.ant-btn {
+    background: $white;
+    color: $primary-color;
+    font-weight: 600;
+    border: none;
+    border-radius: $radius-md;
+    height: 48px;
+    padding: 0 $spacing-xl;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.9) !important;
+      color: $primary-color !important;
+    }
+  }
+
+  &__cta-btn-secondary.ant-btn {
+    background: transparent;
+    color: $white;
+    font-weight: 600;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: $radius-md;
+    height: 48px;
+    padding: 0 $spacing-xl;
+
+    &:hover {
+      border-color: $white !important;
+      color: $white !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  // ─── Footer ──────────────────────────────────────────────────────────────
+
+  &__footer {
+    background: $white;
+    border-top: 1px solid $border-color;
+    padding: $spacing-xxl $spacing-xl $spacing-lg;
+  }
+
+  &__footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__footer-tagline.ant-typography {
+    color: $text-muted;
+    font-size: $font-size-base;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  &__footer-socials {
+    display: flex;
+    gap: $spacing-md;
+  }
+
+  &__footer-social-icon {
+    font-size: 18px;
+    color: $text-muted;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  &__footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__footer-heading {
+    font-weight: 600;
+    font-size: $font-size-base;
+    color: $text-primary;
+    text-transform: none;
+  }
+
+  &__footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__footer-link {
+    color: $text-muted;
+    font-size: $font-size-base;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  &__footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: $spacing-lg;
+    margin-top: $spacing-xl;
+    border-top: 1px solid $border-color;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+
+  &__footer-copy {
+    color: $text-muted;
+    font-size: $font-size-sm;
+  }
+
+  &__footer-legal {
+    display: flex;
+    gap: $spacing-lg;
+  }
+
+  &__footer-legal-link {
+    color: $text-muted;
+    font-size: $font-size-sm;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
