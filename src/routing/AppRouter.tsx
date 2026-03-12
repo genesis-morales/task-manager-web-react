@@ -5,6 +5,7 @@ import { Spin } from "antd";
 const Home = lazy(() => import("../features/auth/pages/home/Home"));
 const Login = lazy(() => import("../features/auth/pages/login/Login"));
 const Register = lazy(() => import("../features/auth/pages/register/Register"));  
+const PasswordReset = lazy(() => import("../features/auth/pages/password-reset/PasswordReset"));
 
 const AppRouter: React.FC = () => (
   <BrowserRouter>
@@ -13,6 +14,7 @@ const AppRouter: React.FC = () => (
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/password-reset" element={<PasswordReset />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
