@@ -1,8 +1,8 @@
-import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Spin } from "antd";
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-const Home = lazy(() => import("../features/auth/pages/home/Home"));
+const Home = lazy(() => import("../features/home/pages/Home"));
 const Login = lazy(() => import("../features/auth/pages/login/Login"));
 const Register = lazy(() => import("../features/auth/pages/register/Register"));  
 const PasswordReset = lazy(() => import("../features/auth/pages/password-reset/PasswordReset"));

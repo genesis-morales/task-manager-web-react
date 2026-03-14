@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Typography,
-  Divider,
-  Card,
-  Progress,
-} from "antd";
+import { Button,Form,Input,Typography,Card,Progress } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./RegisterForm.scss";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import AppNavbar from "../../../../shared/components/nav-bar/AppNavbar";
 import AppFooter from "../../../../shared/components/footer/AppFooter";
-import RegisterForm from "../../pages/register/components/RegisterForm";
+import RegisterForm from "../../components/register-form/RegisterForm";
 import "./Register.scss";
 
 const Register: React.FC = () => (
