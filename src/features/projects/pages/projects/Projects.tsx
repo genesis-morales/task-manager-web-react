@@ -4,8 +4,10 @@ import ProjectsHeader from "../../components/projects-header/ProjectsHeader";
 import ProjectListItem from "../../components/project-list-item/ProjectListItem";
 import ProjectGrid from "../../components/project-grid/ProjectGrid";
 import ProjectFormModal from "../../components/project-form-modal/ProjectFormModal";
+import ProjectFilterDrawer from "../../components/project-filter-drawer/ProjectFilterDrawer";
 import { useProjects } from "../../hooks/useProjects";
 import { useProjectModal } from "../../hooks/useProjectModal";
+import { useProjectFilters } from "../../hooks/useProjectFilters";
 import type { ViewMode } from "../../types/project.types";
 import { Row, Col, Skeleton } from "antd";
 import "./Projects.scss";
@@ -28,49 +30,21 @@ const Projects: React.FC = () => {
     modalLoading,
     editingProject,
     handleNewProject,
-    handleEdit,        
+    handleEdit,
     handleModalSubmit,
     handleModalClose,} = useProjectModal(updateProject, sortedProjects); 
 
-  if (loading) {
-    return (
-      <div className="projects">
-        <ProjectsHeader
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          onNewProject={handleNewProject}
-          onSort={handleSort}
-          onFilter={() => {}}
-        />
-        <Row gutter={[24, 24]}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Col key={i} xs={24} sm={12} lg={8}>
-              <Skeleton active className="projects__skeleton" />
-            </Col>
-          ))}
-        </Row>
-      </div>
-    );
-  }
+  const {
+    filters,
+    filterDrawerOpen,
+    activeFilterCount,
+    setFilterDrawerOpen,
+    applyFilters,
+    handleFilterChange,
+    handleResetFilters,
+  } = useProjectFilters();
 
-  if (sortedProjects.length === 0) {
-    return (
-      <div className="projects">
-        <ProjectsHeader
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          onNewProject={handleNewProject}
-          onSort={handleSort}
-          onFilter={() => {}}
-        />
-        <Empty
-          className="projects__empty"
-          description="No projects yet. Create your first project!"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      </div>
-    );
-  }
+const filteredProjects = applyFilters(sortedProjects);
 
   return (
     <div className="projects">
@@ -79,21 +53,40 @@ const Projects: React.FC = () => {
         onViewModeChange={setViewMode}
         onNewProject={handleNewProject}
         onSort={handleSort}
-        onFilter={() => {}}
+        onFilter={() => setFilterDrawerOpen(true)} 
+        activeFilterCount={activeFilterCount}
       />
 
-      {viewMode === "grid" && (
-        <ProjectGrid
-          projects={sortedProjects}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      )}
+    {loading && (
+      <Row gutter={[24, 24]}>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Col key={i} xs={24} sm={12} lg={8}>
+            <Skeleton active className="projects__skeleton" />
+          </Col>
+        ))}
+      </Row>
+    )}
 
-      {viewMode === "list" && (
+    {!loading && filteredProjects.length === 0 && (
+      <Empty
+        className="projects__empty"
+        description="No projects yet. Create your first project!"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+      />
+    )}
+
+    {!loading && viewMode === "grid" && filteredProjects.length > 0 && (
+      <ProjectGrid
+        projects={filteredProjects}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+    )}
+
+    {!loading && viewMode === "list" && filteredProjects.length > 0 && (
         <div className="projects__list">
-          {sortedProjects.map((project) => (
+          {filteredProjects.map((project) => (
             <ProjectListItem
               key={project.id}
               project={project}
@@ -103,14 +96,16 @@ const Projects: React.FC = () => {
             />
           ))}
         </div>
-      )}
+    )}
 
-      <div className="projects__footer">
-        <Text className="projects__count">
-          Showing {sortedProjects.length} projects
-        </Text>
-        <button className="projects__archived-link">View Archived</button>
-      </div>
+      {!loading && (
+        <div className="projects__footer">
+          <Text className="projects__count">
+            Showing {filteredProjects.length} projects
+          </Text>
+          <button className="projects__archived-link">View Archived</button>
+        </div>
+    )}
 
       <ProjectFormModal
         open={modalOpen}
@@ -118,6 +113,14 @@ const Projects: React.FC = () => {
         onSubmit={handleModalSubmit}
         loading={modalLoading}
         initialValues={editingProject ?? undefined}
+      />
+
+      <ProjectFilterDrawer
+        open={filterDrawerOpen}
+        filters={filters}
+        onClose={() => setFilterDrawerOpen(false)}
+        onFilterChange={handleFilterChange}
+        onReset={handleResetFilters}
       />
     </div>
   );

@@ -14,15 +14,11 @@ export interface Project {
   createdAt: string;
 }
 
-// ─── Form ─────────────────────────────────────────────────────────────────────
-
 export interface ProjectFormValues {
   name: string;
   description?: string;
   color: ProjectColor;
 }
-
-// ─── Components ───────────────────────────────────────────────────────────────
 
 export interface ProjectFormModalProps {
   open: boolean;
@@ -36,3 +32,14 @@ export interface ProjectColorPickerProps {
   value?: ProjectColor;
   onChange?: (color: ProjectColor) => void;
 }
+
+export interface ProjectFilters {
+  colors: ProjectColor[];
+  hasTasks: boolean | null; 
+}
+
+export const DEFAULT_FILTERS: ProjectFilters = {
+  colors: [],
+  hasTasks: null,
+};
+

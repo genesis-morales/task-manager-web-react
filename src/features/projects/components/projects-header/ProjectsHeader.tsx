@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Tooltip } from "antd";
+import { Button, Tooltip, Badge } from "antd";
 import { SortAscendingOutlined, FilterOutlined, AppstoreOutlined, UnorderedListOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ViewMode } from "../../types/project.types";
 import "./ProjectsHeader.scss";
@@ -10,6 +10,7 @@ interface ProjectsHeaderProps {
   onNewProject: () => void;
   onSort: () => void;
   onFilter: () => void;
+  activeFilterCount?: number;
 }
 
 const ProjectsHeader: React.FC<ProjectsHeaderProps> = ({
@@ -18,6 +19,7 @@ const ProjectsHeader: React.FC<ProjectsHeaderProps> = ({
   onNewProject,
   onSort,
   onFilter,
+  activeFilterCount = 0, 
 }) => (
   <div className="projects-header">
     <h1 className="projects-header__title">Projects</h1>
@@ -26,9 +28,12 @@ const ProjectsHeader: React.FC<ProjectsHeaderProps> = ({
       <Button icon={<SortAscendingOutlined />} onClick={onSort} className="projects-header__btn">
         Sort
       </Button>
-      <Button icon={<FilterOutlined />} onClick={onFilter} className="projects-header__btn">
-        Filter
-      </Button>
+
+      <Badge count={activeFilterCount} size="small">
+        <Button icon={<FilterOutlined />} onClick={onFilter} className="projects-header__btn">
+          Filter
+        </Button>
+      </Badge>
 
       <div className="projects-header__view-toggle">
         <Tooltip title="Grid view">
