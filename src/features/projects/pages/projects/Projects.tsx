@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Empty, Typography } from "antd";
+import { Typography } from "antd";
 import ProjectsHeader from "../../components/projects-header/ProjectsHeader";
 import ProjectListItem from "../../components/project-list-item/ProjectListItem";
 import ProjectGrid from "../../components/project-grid/ProjectGrid";
 import ProjectFormModal from "../../components/project-form-modal/ProjectFormModal";
 import ProjectFilterDrawer from "../../components/project-filter-drawer/ProjectFilterDrawer";
+import ProjectsEmpty from "../../components/projects-empty/ProjectsEmpty";
 import { useProjects } from "../../hooks/useProjects";
 import { useProjectModal } from "../../hooks/useProjectModal";
 import { useProjectFilters } from "../../hooks/useProjectFilters";
@@ -55,6 +56,7 @@ const filteredProjects = applyFilters(sortedProjects);
         onSort={handleSort}
         onFilter={() => setFilterDrawerOpen(true)} 
         activeFilterCount={activeFilterCount}
+        isEmpty={sortedProjects.length === 0}
       />
 
     {loading && (
@@ -68,11 +70,7 @@ const filteredProjects = applyFilters(sortedProjects);
     )}
 
     {!loading && filteredProjects.length === 0 && (
-      <Empty
-        className="projects__empty"
-        description="No projects yet. Create your first project!"
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-      />
+      <ProjectsEmpty onNewProject={handleNewProject} />
     )}
 
     {!loading && viewMode === "grid" && filteredProjects.length > 0 && (

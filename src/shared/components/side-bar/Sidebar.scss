@@ -1,13 +1,11 @@
 .sidebar {
-  width: 220px;
+  width: 240px; // ← punto medio entre 220 y 260
   min-height: 100vh;
   background-color: #1a1f2e;
   display: flex;
   flex-direction: column;
   padding: $spacing-lg $spacing-md;
   flex-shrink: 0;
-
-  // ─── Logo ──────────────────────────────────────────────────────────────
 
   &__logo {
     display: flex;
@@ -36,8 +34,6 @@
     font-weight: 700;
     font-size: $font-size-md;
   }
-
-  // ─── Nav ───────────────────────────────────────────────────────────────
 
   &__nav {
     display: flex;
@@ -88,8 +84,6 @@
     font-weight: 500;
   }
 
-  // ─── Bottom ────────────────────────────────────────────────────────────
-
   &__bottom {
     display: flex;
     flex-direction: column;
@@ -97,8 +91,6 @@
     padding-top: $spacing-lg;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
-
-  // ─── User profile ──────────────────────────────────────────────────────
 
   &__user {
     display: flex;
@@ -159,5 +151,57 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    }
+
+  @media (max-width: 1024px) {
+    width: 220px;
+  }
+
+  @media (max-width: 768px) {
+    position: fixed;   
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;         
+    min-height: auto;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: $spacing-sm $spacing-md;
+    z-index: 100;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    &__logo,
+    &__bottom,
+    &__user-info,
+    &__logo-text {
+      display: none; 
+    }
+
+    &__nav {
+      flex-direction: row;
+      flex: unset;
+      gap: 0;
+      justify-content: space-around;
+      width: 100%;
+    }
+
+    &__nav-item {
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 12px;
+      width: auto;
+      font-size: 10px;
+      border-radius: $radius-md;
+    }
+
+    &__nav-icon {
+      font-size: 20px;
+    }
+
+    &__nav-label {
+      font-size: 10px;
+    }
   }
 }

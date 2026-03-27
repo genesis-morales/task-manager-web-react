@@ -1,6 +1,8 @@
 .projects {
-  padding: $spacing-xl $spacing-xxl;
-  max-width: 1200px;
+  max-width: 1200px;  
+  margin: 0 auto;     
+  padding: 32px;
+  width: 100%;
 
   &__skeleton {
     background: $white;
