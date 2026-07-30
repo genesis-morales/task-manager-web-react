@@ -1,26 +1,149 @@
+@use 'variables' as *;
+@use 'theme';
+
+// ============================================
+// GLOBAL STYLES
+// ============================================
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: $font-family;
+  font-family: $font-body;
+  font-weight: $weight-body;
+  font-size: $font-size-base;
+  line-height: $leading-normal;
+  color: var(--text-primary);
+  background-color: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $text-primary;
-  background-color: $secondary-color;
+  transition: background-color $transition-base, color $transition-base;
 }
 
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  font-weight: $weight-heading;
+  line-height: $leading-tight;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+h1 { font-size: $font-size-4xl; }
+h2 { font-size: $font-size-3xl; }
+h3 { font-size: $font-size-2xl; }
+h4 { font-size: $font-size-xl; }
+h5 { font-size: $font-size-lg; }
+h6 { font-size: $font-size-md; }
+
+// Paragraphs
+p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: $leading-relaxed;
+}
+
+// Links
 a {
   text-decoration: none;
-  color: inherit;
+  color: var(--accent);
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--accent-hover);
+  }
 }
 
-ul {
+// Code / Mono
+code, pre, kbd, samp {
+  font-family: $font-mono;
+  font-weight: $weight-mono;
+  font-size: $font-size-sm;
+}
+
+code {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: $radius-sm;
+  padding: 0.125rem 0.375rem;
+}
+
+pre {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  padding: $spacing-4;
+  overflow-x: auto;
+
+  code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+}
+
+// Lists
+ul, ol {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+// Images
+img {
+  max-width: 100%;
+  display: block;
+}
+
+// Buttons — reset
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+// Inputs — base theme override
+input, textarea, select {
+  font-family: $font-body;
+  font-size: $font-size-base;
+}
+
+// Focus visible for accessibility
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+// Selection
+::selection {
+  background-color: var(--accent);
+  color: var(--text-primary);
+}
+
+// Scrollbar (dark themed)
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: $radius-full;
+
+  &:hover {
+    background: var(--text-muted);
+  }
 }
