@@ -4,11 +4,11 @@
 
   &__content {
     flex: 1;
-    background-color: $secondary-color;
+    background-color: var(--bg);
     overflow-y: auto;
   }
 
   @media (max-width: 768px) {
-      padding-bottom: 70px; 
-    }
+    padding-bottom: 70px;
+  }
 }

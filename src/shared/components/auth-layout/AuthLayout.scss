@@ -1,0 +1,256 @@
+@use '../../../styles/variables' as *;
+
+.auth-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background-color: var(--bg);
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
+
+  // Left panel — form side
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $spacing-6 $spacing-8;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+
+    @media (max-width: $breakpoint-lg) {
+      height: auto;
+      position: static;
+      padding: $spacing-6;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-5;
+    }
+  }
+
+  // Top bar (brand + theme toggle)
+  &__top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  // Brand
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__brand-name {
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+    font-size: $font-size-md;
+    color: var(--text-primary);
+  }
+
+  // Theme toggle
+  &__theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: $radius-md;
+    color: var(--text-secondary);
+    transition: color $transition-fast, border-color $transition-fast, background-color $transition-fast;
+
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+      background-color: var(--surface-2);
+    }
+  }
+
+  // Content area — centers the form vertically
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 360px;
+
+    @media (max-width: $breakpoint-sm) {
+      max-width: 100%;
+    }
+  }
+
+  // Footer
+  &__footer {
+    width: 100%;
+    max-width: 360px;
+    padding-top: $spacing-4;
+  }
+
+  &__footer-text {
+    font-size: $font-size-xs;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  // Right decorative panel
+  &__decoration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-1);
+    border-left: 1px solid var(--border);
+    padding: $spacing-8;
+    position: relative;
+    overflow: hidden;
+
+    @media (max-width: $breakpoint-lg) {
+      display: none;
+    }
+  }
+
+  &__decoration-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-6;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  // Mockup en el panel decorativo
+  &__decoration-mockup {
+    width: 100%;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: $radius-xl;
+    overflow: hidden;
+  }
+
+  &__mockup-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-3 $spacing-4;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--bg);
+  }
+
+  &__mockup-dots {
+    display: flex;
+    gap: 5px;
+
+    span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+
+      &:nth-child(1) { background-color: var(--danger); opacity: 0.7; }
+      &:nth-child(2) { background-color: var(--warning); opacity: 0.7; }
+      &:nth-child(3) { background-color: var(--accent); opacity: 0.7; }
+    }
+  }
+
+  &__mockup-body {
+    padding: $spacing-5;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+
+  &__mockup-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-3;
+  }
+
+  &__mockup-stat {
+    background-color: var(--surface-3);
+    border-radius: $radius-md;
+    padding: $spacing-3;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__mockup-stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  &__mockup-stat-value {
+    font-size: $font-size-sm;
+    font-weight: $weight-heading;
+    color: var(--text-primary);
+
+    &--accent {
+      color: var(--accent);
+      font-family: $font-mono;
+      font-weight: $weight-mono;
+      font-size: $font-size-xs;
+    }
+  }
+
+  &__mockup-activity {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+
+  &__mockup-activity-title {
+    font-size: $font-size-xs;
+    font-weight: $weight-label;
+    color: var(--text-secondary);
+    margin-bottom: $spacing-1;
+  }
+
+  &__mockup-activity-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-2 $spacing-3;
+    background-color: var(--surface-3);
+    border-radius: $radius-sm;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  &__mockup-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--accent { background-color: var(--accent); }
+    &--info { background-color: var(--info); }
+    &--warning { background-color: var(--warning); }
+  }
+
+  // Text below mockup
+  &__decoration-text {
+    text-align: center;
+    padding: 0 $spacing-4;
+
+    h3 {
+      font-family: $font-heading;
+      font-weight: $weight-heading;
+      font-size: $font-size-lg;
+      color: var(--text-primary);
+      margin-bottom: $spacing-2;
+    }
+
+    p {
+      font-size: $font-size-sm;
+      color: var(--text-muted);
+      line-height: $leading-relaxed;
+    }
+  }
+}
