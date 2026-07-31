@@ -1,41 +1,82 @@
+@use '../../../../styles/variables' as *;
+
 .project-detail {
-  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  padding: $spacing-8 $spacing-6;
 
-  &__breadcrumb {
-    margin-bottom: 1.5rem;
+  &--loading,
+  &--error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: $spacing-3;
+    color: var(--text-muted);
+    font-size: $font-size-sm;
+
+    h2 {
+      font-size: $font-size-xl;
+      color: var(--text-primary);
+    }
   }
 
-  &__back {
-    margin-bottom: 1rem;
-    display: flex;
+  &__spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: pd-spin 0.6s linear infinite;
+  }
+
+  &__header {
+    margin-bottom: $spacing-8;
+  }
+
+  &__back-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: $spacing-2;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: $font-size-sm;
+    font-weight: $weight-label;
+    padding: 0;
+    margin-bottom: $spacing-4;
+
+    &:hover {
+      color: var(--accent-hover);
+    }
   }
 
   &__title {
-    margin-bottom: 0.5rem !important;
-    color: #1f2937;
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+    font-size: $font-size-3xl;
+    color: var(--text-primary);
+    margin-bottom: $spacing-2;
   }
 
   &__description {
-    font-size: 1.125rem;
-    color: #6b7280;
-    line-height: 1.6;
+    font-size: $font-size-base;
+    color: var(--text-muted);
+    line-height: $leading-relaxed;
   }
 
-  &--not-found {
-    @extend .project-detail;
+  &__workspace {
+    padding: $spacing-12 0;
+  }
+
+  &__placeholder {
     text-align: center;
-    padding: 4rem 2rem;
-  }
-
-  &__updated {
-    display: block;
-    margin-top: 8px;
-    color: #9ca3af;
-    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-size: $font-size-sm;
   }
 }
 
+@keyframes pd-spin {
+  to { transform: rotate(360deg); }
+}

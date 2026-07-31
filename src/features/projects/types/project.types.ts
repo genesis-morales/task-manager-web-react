@@ -1,45 +1,36 @@
-export type ProjectColor =| "blue"|"purple"|"green"|"orange"|"red"|"pink";
-
-export type ViewMode = "grid" | "list";
-
-export type SortOption = "name" | "date" | "tasks";
+// ============================================
+// Project Types — aligned with backend API
+// ============================================
 
 export interface Project {
   id: string;
   name: string;
   description: string;
-  color: ProjectColor;
-  taskCount: number;
-  lastUpdated: string;
-  createdAt: string;
+  github_repo_url: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface ProjectFormValues {
+export interface CreateProjectRequest {
   name: string;
   description?: string;
-  color: ProjectColor;
+  github_repo_url?: string;
 }
 
-export interface ProjectFormModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (values: ProjectFormValues) => void;
-  loading?: boolean;
-  initialValues?: Partial<Project>;
+export interface UpdateProjectRequest {
+  name?: string;
+  description?: string;
+  github_repo_url?: string;
 }
 
-export interface ProjectColorPickerProps {
-  value?: ProjectColor;
-  onChange?: (color: ProjectColor) => void;
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  size: number;
 }
 
-export interface ProjectFilters {
-  colors: ProjectColor[];
-  hasTasks: boolean | null; 
+export interface ProjectsQueryParams {
+  page?: number;
+  size?: number;
 }
-
-export const DEFAULT_FILTERS: ProjectFilters = {
-  colors: [],
-  hasTasks: null,
-};
-

@@ -1,0 +1,196 @@
+@use '../../../../styles/variables' as *;
+
+.create-modal {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: $radius-xl;
+  width: 100%;
+  max-width: 480px;
+  padding: $spacing-6;
+  box-shadow: $shadow-xl;
+  animation: modal-in 0.2s ease;
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-4;
+    z-index: $z-modal;
+    animation: overlay-in 0.15s ease;
+  }
+
+  // Header
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-5;
+  }
+
+  &__title {
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+    font-size: $font-size-xl;
+    color: var(--text-primary);
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: $spacing-1;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      color: var(--text-primary);
+      background-color: var(--surface-2);
+    }
+  }
+
+  // Alert
+  &__alert {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-3 $spacing-4;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-5;
+    background-color: rgba(224, 108, 117, 0.1);
+    border: 1px solid rgba(224, 108, 117, 0.3);
+    color: var(--danger);
+  }
+
+  // Form
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-5;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+
+  &__label {
+    font-weight: $weight-label;
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: $radius-md;
+    color: var(--text-primary);
+    font-family: $font-body;
+    font-size: $font-size-base;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &::placeholder {
+      color: var(--text-muted);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(25, 179, 140, 0.15);
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: $leading-relaxed;
+  }
+
+  &__hint {
+    font-size: $font-size-xs;
+    color: var(--text-muted);
+  }
+
+  // Actions
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $spacing-3;
+    padding-top: $spacing-2;
+    border-top: 1px solid var(--border);
+    margin-top: $spacing-2;
+  }
+
+  &__btn-cancel {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    font-weight: $weight-label;
+    padding: $spacing-2 $spacing-5;
+    border-radius: $radius-md;
+    transition: border-color $transition-fast, color $transition-fast;
+
+    &:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+  }
+
+  &__btn-submit {
+    background-color: var(--accent);
+    color: #ffffff;
+    border: none;
+    font-size: $font-size-sm;
+    font-weight: $weight-heading;
+    padding: $spacing-2 $spacing-5;
+    border-radius: $radius-md;
+    transition: background-color $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 130px;
+
+    &:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: modal-spin 0.6s linear infinite;
+  }
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes modal-spin {
+  to { transform: rotate(360deg); }
+}

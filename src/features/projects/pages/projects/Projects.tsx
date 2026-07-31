@@ -1,124 +1,114 @@
 import React, { useState } from "react";
-import { Typography } from "antd";
-import ProjectsHeader from "../../components/projects-header/ProjectsHeader";
-import ProjectListItem from "../../components/project-list-item/ProjectListItem";
-import ProjectGrid from "../../components/project-grid/ProjectGrid";
-import ProjectFormModal from "../../components/project-form-modal/ProjectFormModal";
-import ProjectFilterDrawer from "../../components/project-filter-drawer/ProjectFilterDrawer";
-import ProjectsEmpty from "../../components/projects-empty/ProjectsEmpty";
 import { useProjects } from "../../hooks/useProjects";
-import { useProjectModal } from "../../hooks/useProjectModal";
-import { useProjectFilters } from "../../hooks/useProjectFilters";
-import type { ViewMode } from "../../types/project.types";
-import { Row, Col, Skeleton } from "antd";
+import ProjectCard from "../../components/project-card/ProjectCard";
+import CreateProjectModal from "../../components/create-project-modal/CreateProjectModal";
 import "./Projects.scss";
 
-const { Text } = Typography;
-
 const Projects: React.FC = () => {
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const { projects, total, isLoading, error, handleCreate, handleDelete, handleClearError } = useProjects();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const {
-    sortedProjects,
-    loading,
-    handleView,
-    handleDelete,
-    handleSort,
-    updateProject,} = useProjects();
-
-  const {
-    modalOpen,
-    modalLoading,
-    editingProject,
-    handleNewProject,
-    handleEdit,
-    handleModalSubmit,
-    handleModalClose,} = useProjectModal(updateProject, sortedProjects); 
-
-  const {
-    filters,
-    filterDrawerOpen,
-    activeFilterCount,
-    setFilterDrawerOpen,
-    applyFilters,
-    handleFilterChange,
-    handleResetFilters,
-  } = useProjectFilters();
-
-const filteredProjects = applyFilters(sortedProjects);
+  const filteredProjects = searchQuery
+    ? projects.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : projects;
 
   return (
-    <div className="projects">
-      <ProjectsHeader
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        onNewProject={handleNewProject}
-        onSort={handleSort}
-        onFilter={() => setFilterDrawerOpen(true)} 
-        activeFilterCount={activeFilterCount}
-        isEmpty={sortedProjects.length === 0}
-      />
+    <div className="projects-home">
+      {/* Header */}
+      <div className="projects-home__header">
+        <div className="projects-home__title-row">
+          <div>
+            <h1 className="projects-home__title">Projects</h1>
+            <p className="projects-home__subtitle">
+              {total} {total === 1 ? "workspace" : "workspaces"}
+            </p>
+          </div>
+          <button className="projects-home__new-btn" onClick={() => setModalOpen(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            New Project
+          </button>
+        </div>
 
-    {loading && (
-      <Row gutter={[24, 24]}>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Col key={i} xs={24} sm={12} lg={8}>
-            <Skeleton active className="projects__skeleton" />
-          </Col>
-        ))}
-      </Row>
-    )}
+        {/* Search */}
+        <div className="projects-home__search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="projects-home__search-icon">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input
+            type="text"
+            className="projects-home__search-input"
+            placeholder="Search projects..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
 
-    {!loading && filteredProjects.length === 0 && (
-      <ProjectsEmpty onNewProject={handleNewProject} />
-    )}
+      {/* Error */}
+      {error && (
+        <div className="projects-home__alert">
+          <span>{error}</span>
+          <button className="projects-home__alert-close" onClick={handleClearError}>×</button>
+        </div>
+      )}
 
-    {!loading && viewMode === "grid" && filteredProjects.length > 0 && (
-      <ProjectGrid
-        projects={filteredProjects}
-        onView={handleView}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-    )}
+      {/* Loading */}
+      {isLoading && (
+        <div className="projects-home__loading">
+          <div className="projects-home__spinner" />
+          <span>Loading projects...</span>
+        </div>
+      )}
 
-    {!loading && viewMode === "list" && filteredProjects.length > 0 && (
-        <div className="projects__list">
+      {/* Empty State */}
+      {!isLoading && projects.length === 0 && (
+        <div className="projects-home__empty">
+          <div className="projects-home__empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h3 className="projects-home__empty-title">No projects yet</h3>
+          <p className="projects-home__empty-text">
+            Create your first project to start organizing your workspace.
+          </p>
+          <button className="projects-home__empty-btn" onClick={() => setModalOpen(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Create your first project
+          </button>
+        </div>
+      )}
+
+      {/* No search results */}
+      {!isLoading && projects.length > 0 && filteredProjects.length === 0 && (
+        <div className="projects-home__empty">
+          <p className="projects-home__empty-text">No projects matching "{searchQuery}"</p>
+        </div>
+      )}
+
+      {/* Projects Grid */}
+      {!isLoading && filteredProjects.length > 0 && (
+        <div className="projects-home__grid">
           {filteredProjects.map((project) => (
-            <ProjectListItem
-              key={project.id}
-              project={project}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <ProjectCard key={project.id} project={project} onDelete={handleDelete} />
           ))}
         </div>
-    )}
+      )}
 
-      {!loading && (
-        <div className="projects__footer">
-          <Text className="projects__count">
-            Showing {filteredProjects.length} projects
-          </Text>
-          <button className="projects__archived-link">View Archived</button>
-        </div>
-    )}
-
-      <ProjectFormModal
-        open={modalOpen}
-        onClose={handleModalClose}
-        onSubmit={handleModalSubmit}
-        loading={modalLoading}
-        initialValues={editingProject ?? undefined}
-      />
-
-      <ProjectFilterDrawer
-        open={filterDrawerOpen}
-        filters={filters}
-        onClose={() => setFilterDrawerOpen(false)}
-        onFilterChange={handleFilterChange}
-        onReset={handleResetFilters}
+      {/* Create Modal */}
+      <CreateProjectModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleCreate}
       />
     </div>
   );

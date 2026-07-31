@@ -14,8 +14,6 @@ const ResetPasswordForm = lazy(() => import("../features/auth/components/reset-p
 // App pages
 const Projects = lazy(() => import("../features/projects/pages/projects/Projects"));
 const ProjectDetail = lazy(() => import("../features/projects/pages/project-detail/ProjectDetail"));
-const Tasks = lazy(() => import("../features/tasks/pages/tasks/Tasks"));
-const Dashboard = lazy(() => import("../features/dashboard/pages/dasboard/Dashboard"));
 
 // Loading fallback
 const LoadingFallback = () => (
@@ -41,7 +39,7 @@ const AppRouter: React.FC = () => (
   <BrowserRouter>
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
-        {/* Rutas públicas */}
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -52,13 +50,11 @@ const AppRouter: React.FC = () => (
           </AuthLayout>
         } />
 
-        {/* Rutas protegidas */}
+        {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
-            <Route path="/tasks" element={<Tasks />} />
           </Route>
         </Route>
 
