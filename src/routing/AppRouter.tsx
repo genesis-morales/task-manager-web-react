@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import AppLayout from "../shared/components/layout/AppLayout";
 import ProtectedRoute from "../shared/components/protected-route/ProtectedRoute";
 import AuthLayout from "../shared/components/auth-layout/AuthLayout";
 
@@ -13,7 +12,12 @@ const ResetPasswordForm = lazy(() => import("../features/auth/components/reset-p
 
 // App pages
 const Projects = lazy(() => import("../features/projects/pages/projects/Projects"));
-const ProjectDetail = lazy(() => import("../features/projects/pages/project-detail/ProjectDetail"));
+const ProjectWorkspace = lazy(() => import("../features/projects/pages/project-workspace/ProjectWorkspace"));
+const Overview = lazy(() => import("../features/projects/pages/overview/Overview"));
+const NotesView = lazy(() => import("../features/projects/pages/notes/NotesView"));
+const TasksView = lazy(() => import("../features/projects/pages/tasks/TasksView"));
+const ContextView = lazy(() => import("../features/projects/pages/context/ContextView"));
+const ActivityView = lazy(() => import("../features/projects/pages/activity/ActivityView"));
 
 // Loading fallback
 const LoadingFallback = () => (
@@ -52,9 +56,16 @@ const AppRouter: React.FC = () => (
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
-          <Route element={<AppLayout />}>
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/:id" element={<ProjectDetail />} />
+          {/* Projects Home */}
+          <Route path="/projects" element={<Projects />} />
+
+          {/* Project Workspace with nested views */}
+          <Route path="/projects/:id" element={<ProjectWorkspace />}>
+            <Route index element={<Overview />} />
+            <Route path="notes" element={<NotesView />} />
+            <Route path="tasks" element={<TasksView />} />
+            <Route path="context" element={<ContextView />} />
+            <Route path="activity" element={<ActivityView />} />
           </Route>
         </Route>
 
