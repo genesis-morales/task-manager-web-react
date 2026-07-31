@@ -1,54 +1,46 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useProjects } from "../../hooks/useProjects";
 import ProjectCard from "../../components/project-card/ProjectCard";
 import CreateProjectModal from "../../components/create-project-modal/CreateProjectModal";
 import "./Projects.scss";
 
 const Projects: React.FC = () => {
-  const { projects, total, isLoading, error, handleCreate, handleDelete, handleClearError } = useProjects();
+  const navigate = useNavigate();
+  const { projects, isLoading, error, handleCreate, handleDelete, handleClearError } = useProjects();
   const [modalOpen, setModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredProjects = searchQuery
-    ? projects.filter((p) =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : projects;
+  // Recent projects: last 3 updated
+  const recentProjects = [...projects]
+    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+    .slice(0, 3);
+
+  const timeAgo = (dateStr: string): string => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    return new Date(dateStr).toLocaleDateString();
+  };
 
   return (
     <div className="projects-home">
-      {/* Header */}
+      {/* Page Header */}
       <div className="projects-home__header">
-        <div className="projects-home__title-row">
-          <div>
-            <h1 className="projects-home__title">Projects</h1>
-            <p className="projects-home__subtitle">
-              {total} {total === 1 ? "workspace" : "workspaces"}
-            </p>
-          </div>
-          <button className="projects-home__new-btn" onClick={() => setModalOpen(true)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            New Project
-          </button>
+        <div>
+          <h1 className="projects-home__title">Projects</h1>
+          <p className="projects-home__subtitle">Your workspaces at a glance</p>
         </div>
-
-        {/* Search */}
-        <div className="projects-home__search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="projects-home__search-icon">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35" strokeLinecap="round" strokeLinejoin="round"/>
+        <button className="projects-home__new-btn" onClick={() => setModalOpen(true)}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <input
-            type="text"
-            className="projects-home__search-input"
-            placeholder="Search projects..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+          New Project
+        </button>
       </div>
 
       {/* Error */}
@@ -88,20 +80,42 @@ const Projects: React.FC = () => {
         </div>
       )}
 
-      {/* No search results */}
-      {!isLoading && projects.length > 0 && filteredProjects.length === 0 && (
-        <div className="projects-home__empty">
-          <p className="projects-home__empty-text">No projects matching "{searchQuery}"</p>
-        </div>
+      {/* Continue Working */}
+      {!isLoading && recentProjects.length > 0 && (
+        <section className="projects-home__section">
+          <h2 className="projects-home__section-title">Continue working</h2>
+          <div className="projects-home__recent">
+            {recentProjects.map((project) => (
+              <button
+                key={project.id}
+                className="projects-home__recent-card"
+                onClick={() => navigate(`/projects/${project.id}`)}
+              >
+                <div className="projects-home__recent-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="projects-home__recent-info">
+                  <span className="projects-home__recent-name">{project.name}</span>
+                  <span className="projects-home__recent-time">Updated {timeAgo(project.updated_at)}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
       )}
 
-      {/* Projects Grid */}
-      {!isLoading && filteredProjects.length > 0 && (
-        <div className="projects-home__grid">
-          {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} onDelete={handleDelete} />
-          ))}
-        </div>
+      {/* All Projects Grid */}
+      {!isLoading && projects.length > 0 && (
+        <section className="projects-home__section">
+          <h2 className="projects-home__section-title">All projects</h2>
+          <div className="projects-home__grid">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} onDelete={handleDelete} />
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Create Modal */}

@@ -1,24 +1,14 @@
 @use '../../../../styles/variables' as *;
 
 .projects-home {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: $spacing-8 $spacing-6;
-
-  @media (max-width: $breakpoint-sm) {
-    padding: $spacing-5 $spacing-4;
-  }
+  max-width: 1100px;
 
   // Header
   &__header {
-    margin-bottom: $spacing-8;
-  }
-
-  &__title-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: $spacing-5;
+    margin-bottom: $spacing-8;
 
     @media (max-width: $breakpoint-sm) {
       flex-direction: column;
@@ -29,7 +19,7 @@
   &__title {
     font-family: $font-heading;
     font-weight: $weight-heading;
-    font-size: $font-size-3xl;
+    font-size: $font-size-2xl;
     color: var(--text-primary);
     margin-bottom: $spacing-1;
   }
@@ -55,43 +45,6 @@
     &:hover {
       background-color: var(--accent-hover);
       transform: translateY(-1px);
-    }
-  }
-
-  // Search
-  &__search {
-    position: relative;
-  }
-
-  &__search-icon {
-    position: absolute;
-    left: $spacing-4;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    pointer-events: none;
-  }
-
-  &__search-input {
-    width: 100%;
-    max-width: 400px;
-    height: 40px;
-    padding: 0 $spacing-4 0 $spacing-10;
-    background-color: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: $radius-md;
-    color: var(--text-primary);
-    font-family: $font-body;
-    font-size: $font-size-sm;
-    transition: border-color $transition-fast;
-
-    &::placeholder {
-      color: var(--text-muted);
-    }
-
-    &:focus {
-      outline: none;
-      border-color: var(--accent);
     }
   }
 
@@ -187,10 +140,89 @@
     }
   }
 
-  // Grid
+  // Sections
+  &__section {
+    margin-bottom: $spacing-8;
+  }
+
+  &__section-title {
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+    font-size: $font-size-md;
+    color: var(--text-primary);
+    margin-bottom: $spacing-4;
+  }
+
+  // Continue Working cards
+  &__recent {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-4;
+
+    @media (max-width: $breakpoint-lg) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__recent-card {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-4;
+    background-color: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: $radius-lg;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color $transition-base, transform $transition-base;
+
+    &:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+  }
+
+  &__recent-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__recent-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__recent-name {
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+    font-size: $font-size-sm;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__recent-time {
+    font-size: $font-size-xs;
+    color: var(--text-muted);
+  }
+
+  // All projects grid
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: $spacing-5;
 
     @media (max-width: $breakpoint-sm) {

@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "../shared/components/protected-route/ProtectedRoute";
 import AuthLayout from "../shared/components/auth-layout/AuthLayout";
+import AppShell from "../shared/components/app-shell/AppShell";
 
 // Auth pages
 const Home = lazy(() => import("../features/home/pages/Home"));
@@ -54,12 +55,13 @@ const AppRouter: React.FC = () => (
           </AuthLayout>
         } />
 
-        {/* Protected routes */}
+        {/* Protected routes — with AppShell (global sidebar + header) */}
         <Route element={<ProtectedRoute />}>
-          {/* Projects Home */}
-          <Route path="/projects" element={<Projects />} />
+          <Route element={<AppShell />}>
+            <Route path="/projects" element={<Projects />} />
+          </Route>
 
-          {/* Project Workspace with nested views */}
+          {/* Project Workspace — has its own sidebar, no AppShell */}
           <Route path="/projects/:id" element={<ProjectWorkspace />}>
             <Route index element={<Overview />} />
             <Route path="notes" element={<NotesView />} />
