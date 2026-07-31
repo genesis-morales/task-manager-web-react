@@ -156,23 +156,36 @@
   &__search.ant-input-search {
     max-width: 480px;
 
-    .ant-input {
-      background-color: var(--surface-1);
-      border-color: var(--border);
-      color: var(--text-primary);
+    .ant-input-wrapper {
+      .ant-input {
+        background-color: var(--surface-1);
+        border-color: var(--border);
+        color: var(--text-primary);
 
-      &::placeholder {
-        color: var(--text-muted);
+        &::placeholder {
+          color: var(--text-muted);
+        }
+
+        &:focus, &:hover {
+          border-color: var(--accent);
+        }
       }
 
-      &:focus, &:hover {
-        border-color: var(--accent);
-      }
-    }
+      .ant-input-group-addon {
+        background-color: var(--surface-1);
+        border-color: var(--border);
 
-    .ant-input-search-button {
-      background-color: var(--surface-1);
-      border-color: var(--border);
+        .ant-btn {
+          background-color: var(--surface-1);
+          border-color: var(--border);
+          color: var(--text-muted);
+
+          &:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+          }
+        }
+      }
     }
   }
 
