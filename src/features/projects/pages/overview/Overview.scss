@@ -3,64 +3,23 @@
 .overview {
   max-width: 1100px;
 
-  // Header
   &__header {
     margin-bottom: $spacing-8;
   }
 
-  &__header-info {
-    margin-bottom: $spacing-3;
-  }
-
-  &__title {
+  &__title.ant-typography {
     font-family: $font-heading;
-    font-weight: $weight-heading;
-    font-size: $font-size-2xl;
-    color: var(--text-primary);
-    margin-bottom: $spacing-1;
+    margin-bottom: $spacing-1 !important;
   }
 
-  &__description {
-    font-size: $font-size-sm;
-    color: var(--text-muted);
-    line-height: $leading-relaxed;
-  }
-
-  &__header-meta {
-    display: flex;
-    align-items: center;
-    gap: $spacing-4;
-    flex-wrap: wrap;
-  }
-
-  &__meta-item {
+  &__meta {
     display: flex;
     align-items: center;
     gap: $spacing-2;
-    font-size: $font-size-xs;
-    color: var(--text-muted);
+    margin-top: $spacing-3;
   }
 
-  &__meta-mono {
-    font-family: $font-mono;
-    font-weight: $weight-mono;
-  }
-
-  &__meta-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px $spacing-3;
-    border-radius: $radius-full;
-    font-size: 10px;
-    font-weight: $weight-heading;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background-color: rgba(25, 179, 140, 0.15);
-    color: var(--accent);
-    border: 1px solid rgba(25, 179, 140, 0.3);
-  }
-
-  // Cards Grid
+  // Cards grid
   &__cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -72,62 +31,27 @@
     }
   }
 
-  &__card {
-    background-color: var(--surface-1);
-    border: 1px solid var(--border);
+  &__card.ant-card {
     border-radius: $radius-lg;
-    overflow: hidden;
+    border-color: var(--border);
     transition: border-color $transition-base;
 
     &:hover {
       border-color: var(--accent);
     }
-  }
 
-  &__card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: $spacing-4 $spacing-5;
-    border-bottom: 1px solid var(--border);
-  }
+    .ant-card-head-title {
+      font-family: $font-heading;
+      font-weight: $weight-heading;
+      font-size: $font-size-sm;
+    }
 
-  &__card-title {
-    font-family: $font-heading;
-    font-weight: $weight-heading;
-    font-size: $font-size-sm;
-    color: var(--text-primary);
-  }
-
-  &__card-body {
-    padding: $spacing-4 $spacing-5;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__card-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-  }
-
-  &__mini-spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: ov-spin 0.6s linear infinite;
-  }
-
-  &__card-empty {
-    font-size: $font-size-sm;
-    color: var(--text-muted);
-    text-align: center;
-    padding: $spacing-4 0;
-    margin: auto 0;
+    .ant-card-body {
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
   }
 
   // Task list
@@ -140,48 +64,23 @@
   &__task-item {
     display: flex;
     align-items: center;
-    gap: $spacing-3;
+    gap: $spacing-2;
   }
 
-  &__task-check {
-    width: 16px;
-    height: 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
+  &__task-icon {
+    color: var(--text-muted);
+    font-size: 14px;
     flex-shrink: 0;
   }
 
   &__task-title {
-    font-size: $font-size-sm;
-    color: var(--text-primary);
     flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: $font-size-sm;
   }
 
-  // Badges
-  &__badge {
+  &__task-tag.ant-tag {
     font-size: 10px;
-    font-weight: $weight-heading;
-    padding: 2px $spacing-2;
-    border-radius: $radius-sm;
-    white-space: nowrap;
-
-    &--danger {
-      background-color: rgba(224, 108, 117, 0.15);
-      color: var(--danger);
-    }
-
-    &--warning {
-      background-color: rgba(244, 184, 96, 0.15);
-      color: var(--warning);
-    }
-
-    &--info {
-      background-color: rgba(104, 164, 255, 0.15);
-      color: var(--info);
-    }
+    margin: 0;
   }
 
   // Note list
@@ -197,15 +96,6 @@
     border-radius: $radius-sm;
   }
 
-  &__note-content {
-    font-size: $font-size-sm;
-    color: var(--text-secondary);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
   // Activity list
   &__activity-list {
     display: flex;
@@ -216,59 +106,27 @@
   &__activity-item {
     display: flex;
     align-items: center;
-    gap: $spacing-3;
-  }
-
-  &__activity-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: var(--accent);
-    flex-shrink: 0;
+    gap: $spacing-2;
   }
 
   &__activity-text {
-    font-size: $font-size-sm;
-    color: var(--text-secondary);
     flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: $font-size-sm;
   }
 
   &__activity-time {
-    font-size: $font-size-xs;
-    color: var(--text-muted);
+    font-size: $font-size-xs !important;
     white-space: nowrap;
   }
 
-  // Project Context section
-  &__context-section {
-    margin-top: $spacing-6;
-  }
-
-  &__context-card {
-    background-color: var(--surface-1);
-    border: 1px solid var(--border);
+  // Context card
+  &__context-card.ant-card {
     border-radius: $radius-lg;
-    padding: $spacing-5 $spacing-6;
-  }
+    border-color: var(--border);
 
-  &__context-title {
-    font-family: $font-heading;
-    font-weight: $weight-heading;
-    font-size: $font-size-md;
-    color: var(--text-primary);
-    margin-bottom: $spacing-3;
+    .ant-card-head-title {
+      font-family: $font-heading;
+      font-weight: $weight-heading;
+    }
   }
-
-  &__context-description {
-    font-size: $font-size-sm;
-    color: var(--text-secondary);
-    line-height: $leading-relaxed;
-  }
-}
-
-@keyframes ov-spin {
-  to { transform: rotate(360deg); }
 }

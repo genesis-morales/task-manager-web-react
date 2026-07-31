@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Card, Tag, Typography, Spin, Badge, Empty } from "antd";
+import { CheckCircleOutlined } from "@ant-design/icons";
 import type { RootState } from "../../../../store/store";
-import { tasksApi } from "../../services/workspaceService";
-import { notesApi } from "../../services/workspaceService";
-import { activityApi } from "../../services/workspaceService";
+import { tasksApi, notesApi, activityApi } from "../../services/workspaceService";
 import type { Task, ProjectNote, ActivityEvent } from "../../types/workspace.types";
 import "./Overview.scss";
 
-const PRIORITY_LABELS: Record<string, { label: string; className: string }> = {
-  HIGH: { label: "Alta", className: "overview__badge--danger" },
-  MEDIUM: { label: "Media", className: "overview__badge--warning" },
-  LOW: { label: "Baja", className: "overview__badge--info" },
+const { Title, Paragraph, Text } = Typography;
+
+const PRIORITY_COLOR: Record<string, string> = {
+  HIGH: "red",
+  MEDIUM: "gold",
+  LOW: "blue",
 };
 
 const Overview: React.FC = () => {
@@ -28,19 +30,16 @@ const Overview: React.FC = () => {
   useEffect(() => {
     if (!id) return;
 
-    // Fetch tasks (only TODO/IN_PROGRESS)
     tasksApi.list(id, { size: 5 })
       .then((res) => setTasks(res.data.items))
       .catch(() => setTasks([]))
       .finally(() => setLoadingTasks(false));
 
-    // Fetch recent notes
     notesApi.list(id, { size: 5 })
       .then((res) => setNotes(res.data.items))
       .catch(() => setNotes([]))
       .finally(() => setLoadingNotes(false));
 
-    // Fetch activity
     activityApi.list(id, { size: 5 })
       .then((res) => setActivity(res.data.items))
       .catch(() => setActivity([]))
@@ -60,128 +59,89 @@ const Overview: React.FC = () => {
 
   return (
     <div className="overview">
-      {/* Project Header */}
+      {/* Header */}
       <div className="overview__header">
-        <div className="overview__header-info">
-          <h1 className="overview__title">
-            {currentProject?.name || "Project"}
-          </h1>
-          {currentProject?.description && (
-            <p className="overview__description">{currentProject.description}</p>
-          )}
-        </div>
-        <div className="overview__header-meta">
+        <Title level={2} className="overview__title">{currentProject?.name || "Project"}</Title>
+        {currentProject?.description && (
+          <Paragraph type="secondary">{currentProject.description}</Paragraph>
+        )}
+        <div className="overview__meta">
           {currentProject?.github_repo_url && (
-            <span className="overview__meta-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M15 22v-4a4.8 4.8 0 00-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 004 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M9 18c-4.51 2-5-2-7-2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span className="overview__meta-mono">
-                {currentProject.github_repo_url.replace(/^https?:\/\/github\.com\//, '')}
-              </span>
-            </span>
+            <Tag color="processing">
+              {currentProject.github_repo_url.replace(/^https?:\/\/github\.com\//, '')}
+            </Tag>
           )}
-          <span className="overview__meta-badge">Active</span>
+          <Tag color="success">Active</Tag>
         </div>
       </div>
 
       {/* Cards Grid */}
       <div className="overview__cards">
         {/* Pending Tasks */}
-        <div className="overview__card">
-          <div className="overview__card-header">
-            <h3 className="overview__card-title">Pending tasks</h3>
-          </div>
-          <div className="overview__card-body">
-            {loadingTasks ? (
-              <div className="overview__card-loading"><span className="overview__mini-spinner" /></div>
-            ) : tasks.length === 0 ? (
-              <p className="overview__card-empty">No pending tasks</p>
-            ) : (
-              <ul className="overview__task-list">
-                {tasks.filter(t => t.status !== 'DONE').slice(0, 4).map((task) => (
-                  <li key={task.id} className="overview__task-item">
-                    <span className="overview__task-check" />
-                    <span className="overview__task-title">{task.title}</span>
-                    <span className={`overview__badge ${PRIORITY_LABELS[task.priority]?.className || ''}`}>
-                      {PRIORITY_LABELS[task.priority]?.label || task.priority}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
+        <Card title="Pending tasks" className="overview__card" size="small">
+          {loadingTasks ? <Spin /> : tasks.filter(t => t.status !== 'DONE').length === 0 ? (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No pending tasks" />
+          ) : (
+            <ul className="overview__task-list">
+              {tasks.filter(t => t.status !== 'DONE').slice(0, 4).map((task) => (
+                <li key={task.id} className="overview__task-item">
+                  <CheckCircleOutlined className="overview__task-icon" />
+                  <Text ellipsis className="overview__task-title">{task.title}</Text>
+                  <Tag color={PRIORITY_COLOR[task.priority]} className="overview__task-tag">
+                    {task.priority}
+                  </Tag>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
 
         {/* Quick Notes */}
-        <div className="overview__card">
-          <div className="overview__card-header">
-            <h3 className="overview__card-title">Quick notes</h3>
-          </div>
-          <div className="overview__card-body">
-            {loadingNotes ? (
-              <div className="overview__card-loading"><span className="overview__mini-spinner" /></div>
-            ) : notes.length === 0 ? (
-              <p className="overview__card-empty">No notes yet</p>
-            ) : (
-              <ul className="overview__note-list">
-                {notes.slice(0, 4).map((note) => (
-                  <li key={note.id} className="overview__note-item">
-                    <span className="overview__note-content">{note.content}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
+        <Card title="Quick notes" className="overview__card" size="small">
+          {loadingNotes ? <Spin /> : notes.length === 0 ? (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No notes yet" />
+          ) : (
+            <ul className="overview__note-list">
+              {notes.slice(0, 4).map((note) => (
+                <li key={note.id} className="overview__note-item">
+                  <Text type="secondary" ellipsis={{ tooltip: note.content }}>{note.content}</Text>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
 
         {/* Recent Activity */}
-        <div className="overview__card">
-          <div className="overview__card-header">
-            <h3 className="overview__card-title">Recent activity</h3>
-          </div>
-          <div className="overview__card-body">
-            {loadingActivity ? (
-              <div className="overview__card-loading"><span className="overview__mini-spinner" /></div>
-            ) : activity.length === 0 ? (
-              <p className="overview__card-empty">No activity yet</p>
-            ) : (
-              <ul className="overview__activity-list">
-                {activity.slice(0, 4).map((event) => (
-                  <li key={event.id} className="overview__activity-item">
-                    <span className="overview__activity-dot" />
-                    <span className="overview__activity-text">{event.description}</span>
-                    <span className="overview__activity-time">{timeAgo(event.created_at)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
+        <Card title="Recent activity" className="overview__card" size="small">
+          {loadingActivity ? <Spin /> : activity.length === 0 ? (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No activity yet" />
+          ) : (
+            <ul className="overview__activity-list">
+              {activity.slice(0, 4).map((event) => (
+                <li key={event.id} className="overview__activity-item">
+                  <Badge status="processing" />
+                  <Text type="secondary" ellipsis className="overview__activity-text">{event.description}</Text>
+                  <Text type="secondary" className="overview__activity-time">{timeAgo(event.created_at)}</Text>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
 
         {/* AI Context */}
-        <div className="overview__card">
-          <div className="overview__card-header">
-            <h3 className="overview__card-title">AI Context</h3>
-          </div>
-          <div className="overview__card-body">
-            <p className="overview__card-empty">Context generation coming soon</p>
-          </div>
-        </div>
+        <Card title="AI Context" className="overview__card" size="small">
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Context generation coming soon" />
+        </Card>
       </div>
 
-      {/* Project Context Section */}
-      <div className="overview__context-section">
-        <div className="overview__context-card">
-          <h3 className="overview__context-title">Project Context</h3>
-          {currentProject?.description ? (
-            <p className="overview__context-description">{currentProject.description}</p>
-          ) : (
-            <p className="overview__card-empty">Add a description to your project to see context here.</p>
-          )}
-        </div>
-      </div>
+      {/* Project Context */}
+      <Card title="Project Context" className="overview__context-card">
+        {currentProject?.description ? (
+          <Paragraph>{currentProject.description}</Paragraph>
+        ) : (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Add a project description to see context here." />
+        )}
+      </Card>
     </div>
   );
 };

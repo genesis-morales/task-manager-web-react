@@ -1,11 +1,25 @@
 import React from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Layout, Menu, Avatar, Input, Badge, Button, Tooltip } from "antd";
+import {
+  ProjectOutlined,
+  ClockCircleOutlined,
+  StarOutlined,
+  SettingOutlined,
+  BellOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
 import { useAuth } from "../../../features/auth/hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
+import type { MenuProps } from "antd";
 import "./AppShell.scss";
+
+const { Sider, Header, Content } = Layout;
+const { Search } = Input;
 
 const AppShell: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
@@ -14,10 +28,48 @@ const AppShell: React.FC = () => {
     navigate("/login");
   };
 
+  const navItems: MenuProps["items"] = [
+    {
+      key: "/projects",
+      icon: <ProjectOutlined />,
+      label: "Projects",
+    },
+    {
+      key: "recent",
+      icon: <ClockCircleOutlined />,
+      label: "Recent",
+      disabled: true,
+    },
+    {
+      key: "starred",
+      icon: <StarOutlined />,
+      label: "Starred",
+      disabled: true,
+    },
+  ];
+
+  const bottomItems: MenuProps["items"] = [
+    {
+      key: "settings",
+      icon: <SettingOutlined />,
+      label: "Settings",
+      disabled: true,
+    },
+  ];
+
+  const handleMenuClick: MenuProps["onClick"] = (e) => {
+    if (e.key.startsWith("/")) {
+      navigate(e.key);
+    }
+  };
+
+  const activeKey = navItems?.find((item) =>
+    item && "key" in item && typeof item.key === "string" && location.pathname.startsWith(item.key)
+  )?.key as string || "/projects";
+
   return (
-    <div className="app-shell">
-      {/* Sidebar */}
-      <aside className="app-shell__sidebar">
+    <Layout className="app-shell">
+      <Sider width={240} className="app-shell__sidebar" breakpoint="lg" collapsedWidth={0}>
         {/* Logo */}
         <div className="app-shell__logo" onClick={() => navigate("/projects")} role="button" tabIndex={0}>
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
@@ -27,104 +79,87 @@ const AppShell: React.FC = () => {
           <span className="app-shell__logo-text">Workspace Flow</span>
         </div>
 
-        {/* Nav */}
-        <nav className="app-shell__nav">
-          <NavLink
-            to="/projects"
-            className={({ isActive }) => `app-shell__nav-item ${isActive ? 'app-shell__nav-item--active' : ''}`}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span className="app-shell__nav-label">Projects</span>
-          </NavLink>
-
-          <button className="app-shell__nav-item" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 6v6l4 2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span className="app-shell__nav-label">Recent</span>
-          </button>
-
-          <button className="app-shell__nav-item" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span className="app-shell__nav-label">Starred</span>
-          </button>
-        </nav>
+        {/* Nav Menu */}
+        <Menu
+          mode="inline"
+          selectedKeys={[activeKey]}
+          items={navItems}
+          onClick={handleMenuClick}
+          className="app-shell__menu"
+        />
 
         {/* Bottom */}
         <div className="app-shell__bottom">
-          {/* Theme toggle */}
-          <button className="app-shell__nav-item" onClick={toggleTheme}>
-            {theme === 'dark' ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3" strokeLinecap="round"/>
-                <line x1="12" y1="21" x2="12" y2="23" strokeLinecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" strokeLinecap="round"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" strokeLinecap="round"/><line x1="1" y1="12" x2="3" y2="12" strokeLinecap="round"/>
-                <line x1="21" y1="12" x2="23" y2="12" strokeLinecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" strokeLinecap="round"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" strokeLinecap="round"/>
-              </svg>
-            )}
-            <span className="app-shell__nav-label">{theme === 'dark' ? 'Dark mode' : 'Light mode'}</span>
-          </button>
+          <Menu
+            mode="inline"
+            selectable={false}
+            items={bottomItems}
+            className="app-shell__menu app-shell__menu--bottom"
+          />
 
-          {/* Settings */}
-          <button className="app-shell__nav-item" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span className="app-shell__nav-label">Settings</span>
-          </button>
+          {/* Theme toggle */}
+          <Tooltip title={theme === "dark" ? "Switch to light" : "Switch to dark"} placement="right">
+            <Button
+              type="text"
+              icon={
+                theme === "dark" ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3" strokeLinecap="round"/>
+                    <line x1="12" y1="21" x2="12" y2="23" strokeLinecap="round"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" strokeLinecap="round"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" strokeLinecap="round"/>
+                    <line x1="1" y1="12" x2="3" y2="12" strokeLinecap="round"/>
+                    <line x1="21" y1="12" x2="23" y2="12" strokeLinecap="round"/>
+                  </svg>
+                )
+              }
+              onClick={toggleTheme}
+              className="app-shell__theme-btn"
+              block
+            >
+              {theme === "dark" ? "Dark mode" : "Light mode"}
+            </Button>
+          </Tooltip>
 
           {/* User */}
           <div className="app-shell__user">
-            <div className="app-shell__user-avatar">
-              {user?.username?.charAt(0).toUpperCase() || 'U'}
-            </div>
+            <Avatar size={36} className="app-shell__user-avatar">
+              {user?.username?.charAt(0).toUpperCase() || "U"}
+            </Avatar>
             <div className="app-shell__user-info">
-              <span className="app-shell__user-name">{user?.username || 'User'}</span>
-              <button className="app-shell__logout" onClick={handleLogout}>Log out</button>
+              <span className="app-shell__user-name">{user?.username || "User"}</span>
+              <Button type="link" size="small" danger onClick={handleLogout} icon={<LogoutOutlined />} className="app-shell__logout">
+                Log out
+              </Button>
             </div>
           </div>
         </div>
-      </aside>
+      </Sider>
 
       {/* Main area */}
-      <div className="app-shell__main-area">
-        <header className="app-shell__header">
-          <div className="app-shell__search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="app-shell__search-icon">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="M21 21l-4.35-4.35" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <input
-              type="text"
-              className="app-shell__search-input"
-              placeholder="Search projects, notes, tasks..."
-            />
-          </div>
+      <Layout className="app-shell__main-area">
+        <Header className="app-shell__header">
+          <Search
+            placeholder="Search projects, notes, tasks..."
+            className="app-shell__search"
+            allowClear
+          />
           <div className="app-shell__header-actions">
-            <button className="app-shell__notification-btn" aria-label="Notifications">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
+            <Badge count={0} dot>
+              <Button type="text" icon={<BellOutlined />} className="app-shell__notification-btn" />
+            </Badge>
           </div>
-        </header>
+        </Header>
 
-        <main className="app-shell__content">
+        <Content className="app-shell__content">
           <Outlet />
-        </main>
-      </div>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 

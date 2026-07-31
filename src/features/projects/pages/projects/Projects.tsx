@@ -1,19 +1,30 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button, Input, Typography, Spin, Empty } from "antd";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useProjects } from "../../hooks/useProjects";
 import ProjectCard from "../../components/project-card/ProjectCard";
 import CreateProjectModal from "../../components/create-project-modal/CreateProjectModal";
 import "./Projects.scss";
 
+const { Title, Text } = Typography;
+
 const Projects: React.FC = () => {
   const navigate = useNavigate();
   const { projects, isLoading, error, handleCreate, handleDelete, handleClearError } = useProjects();
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Recent projects: last 3 updated
   const recentProjects = [...projects]
     .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     .slice(0, 3);
+
+  const filteredProjects = searchQuery
+    ? projects.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : projects;
 
   const timeAgo = (dateStr: string): string => {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -23,73 +34,64 @@ const Projects: React.FC = () => {
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}h ago`;
     const days = Math.floor(hours / 24);
-    if (days < 30) return `${days}d ago`;
-    return new Date(dateStr).toLocaleDateString();
+    return `${days}d ago`;
   };
 
   return (
     <div className="projects-home">
-      {/* Page Header */}
       <div className="projects-home__header">
         <div>
-          <h1 className="projects-home__title">Projects</h1>
-          <p className="projects-home__subtitle">Your workspaces at a glance</p>
+          <Title level={2} className="projects-home__title">Projects</Title>
+          <Text type="secondary">Your workspaces at a glance</Text>
         </div>
-        <button className="projects-home__new-btn" onClick={() => setModalOpen(true)}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)} size="large">
           New Project
-        </button>
+        </Button>
       </div>
 
-      {/* Error */}
-      {error && (
-        <div className="projects-home__alert">
-          <span>{error}</span>
-          <button className="projects-home__alert-close" onClick={handleClearError}>×</button>
-        </div>
+      {/* Search */}
+      {projects.length > 0 && (
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder="Search projects..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          allowClear
+          className="projects-home__search"
+        />
       )}
 
       {/* Loading */}
       {isLoading && (
         <div className="projects-home__loading">
-          <div className="projects-home__spinner" />
-          <span>Loading projects...</span>
+          <Spin size="large" />
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Empty */}
       {!isLoading && projects.length === 0 && (
-        <div className="projects-home__empty">
-          <div className="projects-home__empty-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <h3 className="projects-home__empty-title">No projects yet</h3>
-          <p className="projects-home__empty-text">
-            Create your first project to start organizing your workspace.
-          </p>
-          <button className="projects-home__empty-btn" onClick={() => setModalOpen(true)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+        <Empty
+          description="No projects yet. Create your first one!"
+          className="projects-home__empty"
+        >
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
             Create your first project
-          </button>
-        </div>
+          </Button>
+        </Empty>
       )}
 
       {/* Continue Working */}
-      {!isLoading && recentProjects.length > 0 && (
+      {!isLoading && recentProjects.length > 0 && !searchQuery && (
         <section className="projects-home__section">
-          <h2 className="projects-home__section-title">Continue working</h2>
+          <Title level={5} className="projects-home__section-title">Continue working</Title>
           <div className="projects-home__recent">
             {recentProjects.map((project) => (
-              <button
+              <div
                 key={project.id}
                 className="projects-home__recent-card"
                 onClick={() => navigate(`/projects/${project.id}`)}
+                role="button"
+                tabIndex={0}
               >
                 <div className="projects-home__recent-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
@@ -100,25 +102,29 @@ const Projects: React.FC = () => {
                   <span className="projects-home__recent-name">{project.name}</span>
                   <span className="projects-home__recent-time">Updated {timeAgo(project.updated_at)}</span>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </section>
       )}
 
-      {/* All Projects Grid */}
-      {!isLoading && projects.length > 0 && (
+      {/* All Projects */}
+      {!isLoading && filteredProjects.length > 0 && (
         <section className="projects-home__section">
-          <h2 className="projects-home__section-title">All projects</h2>
+          <Title level={5} className="projects-home__section-title">All projects</Title>
           <div className="projects-home__grid">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <ProjectCard key={project.id} project={project} onDelete={handleDelete} />
             ))}
           </div>
         </section>
       )}
 
-      {/* Create Modal */}
+      {/* No results */}
+      {!isLoading && projects.length > 0 && filteredProjects.length === 0 && searchQuery && (
+        <Empty description={`No projects matching "${searchQuery}"`} />
+      )}
+
       <CreateProjectModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
