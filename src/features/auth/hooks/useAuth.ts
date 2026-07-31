@@ -1,69 +1,74 @@
 import { useState, useEffect, useCallback } from 'react';
 import { authApi } from '../services/authService';
-import type { AuthState, User, AuthTokens } from '../types/authTypes';
+import type { AuthState, User } from '../types/authTypes';
 
 export const useAuth = () => {
   const [state, setState] = useState<AuthState>({
     user: null,
-    tokens: null,
+    accessToken: null,
     isAuthenticated: false,
     isLoading: true,
   });
 
-  const setAuthState = useCallback((user: User | null, tokens: AuthTokens | null) => {
+  const setAuthenticated = useCallback((user: User, accessToken: string) => {
     setState({
       user,
-      tokens,
-      isAuthenticated: !!user && !!tokens,
+      accessToken,
+      isAuthenticated: true,
       isLoading: false,
     });
   }, []);
 
+  const setUnauthenticated = useCallback(() => {
+    setState({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false,
+      isLoading: false,
+    });
+  }, []);
+
+  // Initialize: check if we have a stored token and validate with /me
   const initializeAuth = useCallback(async () => {
     const accessToken = localStorage.getItem('access_token');
-    const refreshToken = localStorage.getItem('refresh_token');
 
-    if (!accessToken || !refreshToken) {
-      setAuthState(null, null);
+    if (!accessToken) {
+      setUnauthenticated();
       return;
     }
 
     try {
-      // Llama al endpoint /me — el interceptor añade el token automáticamente
       const response = await authApi.getMe();
-      setAuthState(response.data, {
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        token_type: 'Bearer',
-        expires_in: 86400,
-      });
+      setAuthenticated(response.data, accessToken);
     } catch {
-      // Token expirado o inválido — limpia la sesión
+      // Token expired or invalid
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      setAuthState(null, null);
+      setUnauthenticated();
     }
-  }, [setAuthState]);
+  }, [setAuthenticated, setUnauthenticated]);
 
+  // Login: POST /api/v1/auth/login → { accessToken, refreshToken, tokenType, expiresIn }
   const login = useCallback(async (email: string, password: string) => {
     try {
       setState(prev => ({ ...prev, isLoading: true }));
       const response = await authApi.login({ email, password });
-      const { user, tokens } = response.data;
+      const { accessToken, refreshToken } = response.data;
 
-      if (!user || !tokens?.access_token) {
-        setState(prev => ({ ...prev, isLoading: false }));
-        return {
-          success: false,
-          error: 'Unexpected response format from server',
-        };
+      // Store tokens
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken);
+
+      // Fetch user profile
+      try {
+        const meResponse = await authApi.getMe();
+        setAuthenticated(meResponse.data, accessToken);
+      } catch {
+        // /me failed but login succeeded — set minimal auth state
+        setAuthenticated({ id: '', email, username: '', createdAt: '' }, accessToken);
       }
 
-      localStorage.setItem('access_token', tokens.access_token);
-      localStorage.setItem('refresh_token', tokens.refresh_token);
-
-      setAuthState(user, tokens);
-      return { success: true, data: response.data };
+      return { success: true };
     } catch (error: any) {
       setState(prev => ({ ...prev, isLoading: false }));
       const detail = error.response?.data?.detail;
@@ -72,29 +77,31 @@ export const useAuth = () => {
         error: typeof detail === 'string' ? detail : 'Invalid credentials',
       };
     }
-  }, [setAuthState]);
+  }, [setAuthenticated]);
 
-const register = useCallback(async (email: string, username: string, password: string) => {
-  try {
-    setState(prev => ({ ...prev, isLoading: true }));
-    await authApi.register({ email, username, password });
+  // Register: POST /api/v1/auth/register → { id, username, email, createdAt }
+  const register = useCallback(async (email: string, username: string, password: string) => {
+    try {
+      setState(prev => ({ ...prev, isLoading: true }));
+      await authApi.register({ email, username, password });
+      setState(prev => ({ ...prev, isLoading: false }));
+      return { success: true };
+    } catch (error: any) {
+      setState(prev => ({ ...prev, isLoading: false }));
+      const detail = error.response?.data?.detail;
+      return {
+        success: false,
+        error: typeof detail === 'string' ? detail : 'Registration failed',
+      };
+    }
+  }, []);
 
-    setState(prev => ({ ...prev, isLoading: false }));
-    return { success: true };
-  } catch (error: any) {
-    setState(prev => ({ ...prev, isLoading: false }));
-    return {
-      success: false,
-      error: error.response?.data?.detail || 'Registration failed',
-    };
-  }
-}, []);
-
+  // Logout
   const logout = useCallback(() => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    setAuthState(null, null);
-  }, [setAuthState]);
+    setUnauthenticated();
+  }, [setUnauthenticated]);
 
   useEffect(() => {
     initializeAuth();

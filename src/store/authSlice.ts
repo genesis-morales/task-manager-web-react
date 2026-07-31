@@ -1,17 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { User, AuthTokens } from '../features/auth/types/authTypes';
+import type { User } from '../features/auth/types/authTypes';
 
 interface AuthState {
   user: User | null;
-  tokens: AuthTokens | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
-  tokens: null,
+  accessToken: null,
   isAuthenticated: false,
   isLoading: false,
 };
@@ -20,32 +20,23 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess(state, action: PayloadAction<{ user: User; tokens: AuthTokens }>) {
+    loginSuccess(state, action: PayloadAction<{ user: User; accessToken: string }>) {
       state.user = action.payload.user;
-      state.tokens = action.payload.tokens;
-      state.isAuthenticated = true;
-      state.isLoading = false;
-    },
-    registerSuccess(state, action: PayloadAction<{ user: User; tokens: AuthTokens }>) {
-      state.user = action.payload.user;
-      state.tokens = action.payload.tokens;
+      state.accessToken = action.payload.accessToken;
       state.isAuthenticated = true;
       state.isLoading = false;
     },
     logout(state) {
       state.user = null;
-      state.tokens = null;
+      state.accessToken = null;
       state.isAuthenticated = false;
       state.isLoading = false;
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
-    setTokens(state, action: PayloadAction<AuthTokens>) {
-      state.tokens = action.payload;
-    },
   },
 });
 
-export const { loginSuccess, registerSuccess, logout, setLoading, setTokens } = authSlice.actions;
+export const { loginSuccess, logout, setLoading } = authSlice.actions;
 export default authSlice.reducer;

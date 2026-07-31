@@ -1,6 +1,14 @@
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import type { AuthResponse, LoginRequest, RegisterRequest, User, PasswordResetRequest, PasswordResetConfirmRequest } from "../types/authTypes";
+import type {
+  LoginResponse,
+  RegisterResponse,
+  LoginRequest,
+  RegisterRequest,
+  User,
+  PasswordResetRequest,
+  PasswordResetConfirmRequest,
+} from '../types/authTypes';
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
@@ -10,7 +18,7 @@ const api: AxiosInstance = axios.create({
   },
 });
 
-// Auth header interceptor
+// Attach auth token to requests
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem('access_token');
   if (token) {
@@ -19,16 +27,16 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// 401 interceptor — only redirect for protected endpoints, not auth endpoints
-const AUTH_ENDPOINTS = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/reset-password'];
+// 401 interceptor — only redirect for protected endpoints
+const PUBLIC_ENDPOINTS = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/reset-password'];
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const requestUrl = error.config?.url || '';
-    const isAuthEndpoint = AUTH_ENDPOINTS.some((ep) => requestUrl.includes(ep));
+    const isPublicEndpoint = PUBLIC_ENDPOINTS.some((ep) => requestUrl.includes(ep));
 
-    if (error.response?.status === 401 && !isAuthEndpoint) {
+    if (error.response?.status === 401 && !isPublicEndpoint) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       window.location.href = '/login';
@@ -40,13 +48,16 @@ api.interceptors.response.use(
 
 export const authApi = {
   login: (data: LoginRequest) =>
-    api.post<AuthResponse>('/api/v1/auth/login', data),
+    api.post<LoginResponse>('/api/v1/auth/login', data),
 
   register: (data: RegisterRequest) =>
-    api.post<AuthResponse>('/api/v1/auth/register', data),
+    api.post<RegisterResponse>('/api/v1/auth/register', data),
 
   getMe: () =>
     api.get<User>('/api/v1/auth/me'),
+
+  refreshToken: (refreshToken: string) =>
+    api.post<LoginResponse>('/api/v1/auth/refresh-token', { refresh_token: refreshToken }),
 
   requestPasswordReset: (data: PasswordResetRequest) =>
     api.post('/api/v1/auth/reset-password/request', data),

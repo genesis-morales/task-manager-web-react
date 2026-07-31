@@ -1,16 +1,26 @@
+// ============================================
+// Auth Types — aligned with actual backend API
+// ============================================
+
 export interface User {
   id: string;
   email: string;
   username: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
 }
 
-export interface AuthTokens {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-  expires_in: number;
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
+}
+
+export interface RegisterResponse {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: string;
 }
 
 export interface LoginRequest {
@@ -24,18 +34,6 @@ export interface RegisterRequest {
   password: string;
 }
 
-export interface AuthResponse {
-  user: User;
-  tokens: AuthTokens;
-}
-
-export interface AuthState {
-  user: User | null;
-  tokens: AuthTokens | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-}
-
 export interface PasswordResetRequest {
   email: string;
 }
@@ -43,4 +41,11 @@ export interface PasswordResetRequest {
 export interface PasswordResetConfirmRequest {
   token: string;
   new_password: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
 }
