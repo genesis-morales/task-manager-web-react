@@ -36,7 +36,7 @@ const LoginForm: React.FC = () => {
     const result = await login(email, password);
 
     if (result.success) {
-      const from = (location.state as any)?.from?.pathname || "/dashboard";
+      const from = (location.state as any)?.from?.pathname || "/projects";
       navigate(from, { replace: true });
     } else {
       setError(result.error || "Invalid credentials");

@@ -49,17 +49,27 @@ export const useAuth = () => {
     try {
       setState(prev => ({ ...prev, isLoading: true }));
       const response = await authApi.login({ email, password });
+      const { user, tokens } = response.data;
 
-      localStorage.setItem('access_token', response.data.tokens.access_token);
-      localStorage.setItem('refresh_token', response.data.tokens.refresh_token);
+      if (!user || !tokens?.access_token) {
+        setState(prev => ({ ...prev, isLoading: false }));
+        return {
+          success: false,
+          error: 'Unexpected response format from server',
+        };
+      }
 
-      setAuthState(response.data.user, response.data.tokens);
+      localStorage.setItem('access_token', tokens.access_token);
+      localStorage.setItem('refresh_token', tokens.refresh_token);
+
+      setAuthState(user, tokens);
       return { success: true, data: response.data };
     } catch (error: any) {
       setState(prev => ({ ...prev, isLoading: false }));
+      const detail = error.response?.data?.detail;
       return {
         success: false,
-        error: error.response?.data?.detail || 'Login failed',
+        error: typeof detail === 'string' ? detail : 'Invalid credentials',
       };
     }
   }, [setAuthState]);
