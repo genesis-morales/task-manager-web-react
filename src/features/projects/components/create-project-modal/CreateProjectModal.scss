@@ -1,0 +1,16 @@
+@use '../../../../styles/variables' as *;
+
+.create-project-modal {
+  .ant-modal-content {
+    border-radius: $radius-xl;
+  }
+
+  .ant-modal-header {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ant-modal-title {
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+  }
+}

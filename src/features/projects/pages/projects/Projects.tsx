@@ -1,124 +1,134 @@
 import React, { useState } from "react";
-import { Typography } from "antd";
-import ProjectsHeader from "../../components/projects-header/ProjectsHeader";
-import ProjectListItem from "../../components/project-list-item/ProjectListItem";
-import ProjectGrid from "../../components/project-grid/ProjectGrid";
-import ProjectFormModal from "../../components/project-form-modal/ProjectFormModal";
-import ProjectFilterDrawer from "../../components/project-filter-drawer/ProjectFilterDrawer";
-import ProjectsEmpty from "../../components/projects-empty/ProjectsEmpty";
+import { useNavigate } from "react-router-dom";
+import { Button, Input, Typography, Spin, Empty } from "antd";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useProjects } from "../../hooks/useProjects";
-import { useProjectModal } from "../../hooks/useProjectModal";
-import { useProjectFilters } from "../../hooks/useProjectFilters";
-import type { ViewMode } from "../../types/project.types";
-import { Row, Col, Skeleton } from "antd";
+import ProjectCard from "../../components/project-card/ProjectCard";
+import CreateProjectModal from "../../components/create-project-modal/CreateProjectModal";
 import "./Projects.scss";
 
-const { Text } = Typography;
+const { Title, Text } = Typography;
 
 const Projects: React.FC = () => {
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const navigate = useNavigate();
+  const { projects, isLoading, error, handleCreate, handleDelete, handleClearError } = useProjects();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const {
-    sortedProjects,
-    loading,
-    handleView,
-    handleDelete,
-    handleSort,
-    updateProject,} = useProjects();
+  const recentProjects = [...projects]
+    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+    .slice(0, 3);
 
-  const {
-    modalOpen,
-    modalLoading,
-    editingProject,
-    handleNewProject,
-    handleEdit,
-    handleModalSubmit,
-    handleModalClose,} = useProjectModal(updateProject, sortedProjects); 
+  const filteredProjects = searchQuery
+    ? projects.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : projects;
 
-  const {
-    filters,
-    filterDrawerOpen,
-    activeFilterCount,
-    setFilterDrawerOpen,
-    applyFilters,
-    handleFilterChange,
-    handleResetFilters,
-  } = useProjectFilters();
-
-const filteredProjects = applyFilters(sortedProjects);
+  const timeAgo = (dateStr: string): string => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
 
   return (
-    <div className="projects">
-      <ProjectsHeader
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        onNewProject={handleNewProject}
-        onSort={handleSort}
-        onFilter={() => setFilterDrawerOpen(true)} 
-        activeFilterCount={activeFilterCount}
-        isEmpty={sortedProjects.length === 0}
-      />
-
-    {loading && (
-      <Row gutter={[24, 24]}>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Col key={i} xs={24} sm={12} lg={8}>
-            <Skeleton active className="projects__skeleton" />
-          </Col>
-        ))}
-      </Row>
-    )}
-
-    {!loading && filteredProjects.length === 0 && (
-      <ProjectsEmpty onNewProject={handleNewProject} />
-    )}
-
-    {!loading && viewMode === "grid" && filteredProjects.length > 0 && (
-      <ProjectGrid
-        projects={filteredProjects}
-        onView={handleView}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-    )}
-
-    {!loading && viewMode === "list" && filteredProjects.length > 0 && (
-        <div className="projects__list">
-          {filteredProjects.map((project) => (
-            <ProjectListItem
-              key={project.id}
-              project={project}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
+    <div className="projects-home">
+      <div className="projects-home__header">
+        <div>
+          <Title level={2} className="projects-home__title">Projects</Title>
+          <Text type="secondary">Your workspaces at a glance</Text>
         </div>
-    )}
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)} size="large">
+          New Project
+        </Button>
+      </div>
 
-      {!loading && (
-        <div className="projects__footer">
-          <Text className="projects__count">
-            Showing {filteredProjects.length} projects
-          </Text>
-          <button className="projects__archived-link">View Archived</button>
+      {/* Search */}
+      {projects.length > 0 && (
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder="Search projects..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          allowClear
+          className="projects-home__search"
+        />
+      )}
+
+      {/* Loading */}
+      {isLoading && (
+        <div className="projects-home__loading">
+          <Spin size="large" />
         </div>
-    )}
+      )}
 
-      <ProjectFormModal
-        open={modalOpen}
-        onClose={handleModalClose}
-        onSubmit={handleModalSubmit}
-        loading={modalLoading}
-        initialValues={editingProject ?? undefined}
-      />
+      {/* Empty */}
+      {!isLoading && projects.length === 0 && (
+        <Empty
+          description="No projects yet. Create your first one!"
+          className="projects-home__empty"
+        >
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
+            Create your first project
+          </Button>
+        </Empty>
+      )}
 
-      <ProjectFilterDrawer
-        open={filterDrawerOpen}
-        filters={filters}
-        onClose={() => setFilterDrawerOpen(false)}
-        onFilterChange={handleFilterChange}
-        onReset={handleResetFilters}
+      {/* Continue Working */}
+      {!isLoading && recentProjects.length > 0 && !searchQuery && (
+        <section className="projects-home__section">
+          <Title level={5} className="projects-home__section-title">Continue working</Title>
+          <div className="projects-home__recent">
+            {recentProjects.map((project) => (
+              <div
+                key={project.id}
+                className="projects-home__recent-card"
+                onClick={() => navigate(`/projects/${project.id}`)}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="projects-home__recent-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="projects-home__recent-info">
+                  <span className="projects-home__recent-name">{project.name}</span>
+                  <span className="projects-home__recent-time">Updated {timeAgo(project.updated_at)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* All Projects */}
+      {!isLoading && filteredProjects.length > 0 && (
+        <section className="projects-home__section">
+          <Title level={5} className="projects-home__section-title">All projects</Title>
+          <div className="projects-home__grid">
+            {filteredProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} onDelete={handleDelete} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* No results */}
+      {!isLoading && projects.length > 0 && filteredProjects.length === 0 && searchQuery && (
+        <Empty description={`No projects matching "${searchQuery}"`} />
+      )}
+
+      <CreateProjectModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleCreate}
       />
     </div>
   );

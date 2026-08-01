@@ -1,110 +1,49 @@
-.login-form {
-  &__card.ant-card {
-    width: 100%;
-    max-width: 460px;
-    border-radius: $radius-lg;
-    box-shadow: $shadow-elevated;
-    padding: $spacing-xxl;
+@use '../../../../styles/variables' as *;
 
-    .ant-card-body {
-      padding: 0;
-    }
-  }
+.login-form {
+  width: 100%;
 
   &__header {
-    text-align: center;
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-6;
   }
 
   &__title.ant-typography {
-    font-size: $font-size-xxl;
-    font-weight: 700;
-    color: $text-primary;
-    margin-bottom: $spacing-xs;
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+    color: var(--text-primary) !important;
+    margin-bottom: $spacing-1 !important;
   }
 
   &__subtitle.ant-typography {
-    color: $text-muted;
-    font-size: $font-size-base;
-    margin-bottom: 0;
+    color: var(--text-muted);
+    margin-bottom: 0 !important;
+  }
+
+  &__alert {
+    margin-bottom: $spacing-5;
   }
 
   &__extras {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-lg;
-    margin-top: -$spacing-sm;
+    justify-content: space-between;
+    margin-bottom: $spacing-5;
   }
 
   &__forgot.ant-btn-link {
-    color: $primary-color;
-    font-weight: 700;
     padding: 0;
     height: auto;
+    font-weight: $weight-label;
   }
 
   &__submit-btn.ant-btn {
-    height: 48px;
-    border-radius: $radius-md;
-    font-weight: 600;
-    margin-top: $spacing-sm;
-  }
-
-  &__divider-text {
-    font-size: $font-size-sm;
-    color: $text-muted;
-    letter-spacing: 0.5px;
-    font-weight: 500;
-  }
-
-  &__social-buttons {
-    display: flex;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
-  }
-
-  &__social-btn.ant-btn {
-    flex: 1;
     height: 44px;
     border-radius: $radius-md;
-    border-color: $border-color;
-    color: $text-primary;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      border-color: $primary-color;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-  }
-
-  &__google-icon {
-    display: flex;
-    align-items: center;
+    font-weight: $weight-heading;
   }
 
   &__signup {
     text-align: center;
-    padding-top: $spacing-md;
-  }
-
-  &__signup-link.ant-btn-link {
-    color: $primary-color;
-    font-weight: 700;
-    padding: 0;
-    height: auto;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    &__card.ant-card {
-      padding: $spacing-lg $spacing-md;
-    }
-
-    &__social-buttons {
-      flex-direction: column;
-    }
+    margin-top: $spacing-6;
   }
 }

@@ -1,49 +1,115 @@
-.projects {
-  max-width: 1200px;  
-  margin: 0 auto;     
-  padding: 32px;
-  width: 100%;
+@use '../../../../styles/variables' as *;
 
-  &__skeleton {
-    background: $white;
-    border-radius: $radius-lg;
-    padding: $spacing-lg;
+.projects-home {
+  max-width: 1100px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: $spacing-6;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      gap: $spacing-4;
+    }
+  }
+
+  &__title.ant-typography {
+    font-family: $font-heading;
+    margin-bottom: $spacing-1 !important;
+  }
+
+  &__search.ant-input-affix-wrapper {
+    max-width: 400px;
+    margin-bottom: $spacing-8;
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: $spacing-16 0;
   }
 
   &__empty {
-    margin-top: $spacing-xxl;
+    padding: $spacing-16 0;
   }
 
-  &__list {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
+  &__section {
+    margin-bottom: $spacing-8;
   }
 
-  &__footer {
+  &__section-title.ant-typography {
+    font-family: $font-heading;
+    margin-bottom: $spacing-4 !important;
+  }
+
+  // Continue Working cards
+  &__recent {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-4;
+
+    @media (max-width: $breakpoint-lg) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: $breakpoint-sm) { grid-template-columns: 1fr; }
+  }
+
+  &__recent-card {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: $spacing-xl;
-    padding-top: $spacing-md;
-  }
-
-  &__count {
-    color: $text-muted;
-    font-size: $font-size-base;
-  }
-
-  &__archived-link {
-    background: none;
-    border: none;
-    color: $primary-color;
-    font-size: $font-size-base;
-    font-weight: 500;
+    gap: $spacing-3;
+    padding: $spacing-4;
+    background-color: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: $radius-lg;
     cursor: pointer;
-    padding: 0;
+    transition: border-color $transition-base, transform $transition-base;
 
     &:hover {
-      text-decoration: underline;
+      border-color: var(--accent);
+      transform: translateY(-1px);
     }
+  }
+
+  &__recent-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__recent-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__recent-name {
+    font-family: $font-heading;
+    font-weight: $weight-heading;
+    font-size: $font-size-sm;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__recent-time {
+    font-size: $font-size-xs;
+    color: var(--text-muted);
+  }
+
+  // Grid
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-5;
+
+    @media (max-width: $breakpoint-sm) { grid-template-columns: 1fr; }
   }
 }

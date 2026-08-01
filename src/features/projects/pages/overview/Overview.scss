@@ -1,0 +1,132 @@
+@use '../../../../styles/variables' as *;
+
+.overview {
+  max-width: 1100px;
+
+  &__header {
+    margin-bottom: $spacing-8;
+  }
+
+  &__title.ant-typography {
+    font-family: $font-heading;
+    margin-bottom: $spacing-1 !important;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    margin-top: $spacing-3;
+  }
+
+  // Cards grid
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-5;
+    margin-bottom: $spacing-8;
+
+    @media (max-width: $breakpoint-lg) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__card.ant-card {
+    border-radius: $radius-lg;
+    border-color: var(--border);
+    transition: border-color $transition-base;
+
+    &:hover {
+      border-color: var(--accent);
+    }
+
+    .ant-card-head-title {
+      font-family: $font-heading;
+      font-weight: $weight-heading;
+      font-size: $font-size-sm;
+    }
+
+    .ant-card-body {
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  // Task list
+  &__task-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__task-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
+
+  &__task-icon {
+    color: var(--text-muted);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  &__task-title {
+    flex: 1;
+    font-size: $font-size-sm;
+  }
+
+  &__task-tag.ant-tag {
+    font-size: 10px;
+    margin: 0;
+  }
+
+  // Note list
+  &__note-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__note-item {
+    padding: $spacing-2 $spacing-3;
+    background-color: var(--surface-2);
+    border-radius: $radius-sm;
+  }
+
+  // Activity list
+  &__activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__activity-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
+
+  &__activity-text {
+    flex: 1;
+    font-size: $font-size-sm;
+  }
+
+  &__activity-time {
+    font-size: $font-size-xs !important;
+    white-space: nowrap;
+  }
+
+  // Context card
+  &__context-card.ant-card {
+    border-radius: $radius-lg;
+    border-color: var(--border);
+
+    .ant-card-head-title {
+      font-family: $font-heading;
+      font-weight: $weight-heading;
+    }
+  }
+}

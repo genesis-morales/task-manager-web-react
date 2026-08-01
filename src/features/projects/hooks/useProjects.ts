@@ -1,64 +1,66 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import type { Project, SortOption, ProjectFormValues } from "../types/project.types";
-import { MOCK_PROJECTS } from "../mocks/projects.mock";
+import { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../../../store/store';
+import {
+  fetchProjects,
+  createProject,
+  updateProject,
+  deleteProject,
+  clearError,
+} from '../store/projectsSlice';
+import type { CreateProjectRequest, UpdateProjectRequest } from '../types/project.types';
 
 export const useProjects = () => {
-  const navigate = useNavigate();
-  const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
-  const [sortBy, setSortBy] = useState<SortOption>("date");
-  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { projects, total, isLoading, error } = useSelector(
+    (state: RootState) => state.projects
+  );
 
-  const sortedProjects = useMemo(() => {
-    return [...projects].sort((a, b) => {
-      if (sortBy === "name") return a.name.localeCompare(b.name);
-      if (sortBy === "tasks") return b.taskCount - a.taskCount;
-      return a.createdAt > b.createdAt ? -1 : 1;
-    });
-  }, [sortBy, projects]);
+  useEffect(() => {
+    dispatch(fetchProjects(undefined));
+  }, [dispatch]);
 
-  const handleView = (id: string): void => {
-    navigate(`/projects/${id}`);
-  };
+  const handleCreate = useCallback(
+    async (data: CreateProjectRequest) => {
+      const result = await dispatch(createProject(data));
+      return result.meta.requestStatus === 'fulfilled';
+    },
+    [dispatch]
+  );
 
+  const handleUpdate = useCallback(
+    async (id: string, data: UpdateProjectRequest) => {
+      const result = await dispatch(updateProject({ id, data }));
+      return result.meta.requestStatus === 'fulfilled';
+    },
+    [dispatch]
+  );
 
-  const handleDelete = (id: string): void => {
-    setProjects((prev) => prev.filter((p) => p.id !== id));
-  };
+  const handleDelete = useCallback(
+    async (id: string) => {
+      const result = await dispatch(deleteProject(id));
+      return result.meta.requestStatus === 'fulfilled';
+    },
+    [dispatch]
+  );
 
-  const handleSort = (): void => {
-    setSortBy((prev) => (prev === "date" ? "name" : prev === "name" ? "tasks" : "date"));
-  };
+  const handleClearError = useCallback(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
-const updateProject = (values: ProjectFormValues, projectId?: string): void => {
-    if (projectId) {
-      setProjects((prev) =>
-        prev.map((p) =>
-          p.id === projectId
-            ? { ...p, ...values, lastUpdated: new Date().toISOString() }
-            : p
-        )
-      );
-    } else {
-      const newProject: Project = {
-        id: crypto.randomUUID(),
-        ...values,
-        description: values.description ?? "",
-        taskCount: 0,
-        lastUpdated: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-      };
-      setProjects((prev) => [newProject, ...prev]);
-    }
-  };
+  const refetch = useCallback(() => {
+    dispatch(fetchProjects(undefined));
+  }, [dispatch]);
 
- return {
-    sortedProjects,
-    loading,
-    setLoading,
-    handleView,
+  return {
+    projects,
+    total,
+    isLoading,
+    error,
+    handleCreate,
+    handleUpdate,
     handleDelete,
-    handleSort,
-    updateProject,  
+    handleClearError,
+    refetch,
   };
 };

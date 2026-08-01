@@ -1,0 +1,55 @@
+// ============================================
+// DESIGN SYSTEM — Theme Tokens (Dark / Light)
+// ============================================
+
+:root[data-theme="dark"] {
+  --bg: #111315;
+  --surface-1: #171A1D;
+  --surface-2: #1D2126;
+  --surface-3: #252A31;
+  --border: #2E353D;
+  --text-primary: #F3F5F7;
+  --text-secondary: #A3ADB8;
+  --text-muted: #7D8794;
+  --accent: #19B38C;
+  --accent-hover: #149A79;
+  --focus: #39C6A1;
+  --warning: #F4B860;
+  --danger: #E06C75;
+  --info: #68A4FF;
+}
+
+:root[data-theme="light"] {
+  --bg: #F6F8FA;
+  --surface-1: #FFFFFF;
+  --surface-2: #F1F4F7;
+  --surface-3: #E9EEF3;
+  --border: #D7DEE6;
+  --text-primary: #151A20;
+  --text-secondary: #4E5A67;
+  --text-muted: #758190;
+  --accent: #0E8F71;
+  --accent-hover: #0B7B61;
+  --focus: #17B890;
+  --warning: #D99A33;
+  --danger: #C85C66;
+  --info: #3D7BE0;
+}
+
+// Default to dark if no data-theme is set
+:root:not([data-theme]) {
+  --bg: #111315;
+  --surface-1: #171A1D;
+  --surface-2: #1D2126;
+  --surface-3: #252A31;
+  --border: #2E353D;
+  --text-primary: #F3F5F7;
+  --text-secondary: #A3ADB8;
+  --text-muted: #7D8794;
+  --accent: #19B38C;
+  --accent-hover: #149A79;
+  --focus: #39C6A1;
+  --warning: #F4B860;
+  --danger: #E06C75;
+  --info: #68A4FF;
+}

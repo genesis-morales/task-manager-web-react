@@ -1,117 +1,75 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Typography, Card } from "antd";
-import { ArrowLeftOutlined, LockOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Alert, Typography, Result } from "antd";
+import { MailOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../../services/authService";
 import "./PasswordResetForm.scss";
 
-const { Title, Paragraph, Text } = Typography;
-
-interface PasswordResetFormValues {
-  email: string;
-}
+const { Title, Paragraph } = Typography;
 
 const PasswordResetForm: React.FC = () => {
   const navigate = useNavigate();
-  const [form] = Form.useForm<PasswordResetFormValues>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (values: PasswordResetFormValues): void => {
-    setLoading(true);
-    console.log(values);
-    setLoading(false);
-    setSubmitted(true);
+  const handleSubmit = async (values: { email: string }) => {
+    try {
+      setLoading(true);
+      await authApi.requestPasswordReset({ email: values.email });
+      setSubmitted(true);
+    } catch (error: any) {
+      form.setFields([{ name: "email", errors: [error.response?.data?.detail || "Something went wrong."] }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
     return (
-      <Card className="password-reset-form__card" bordered={false}>
-        <div className="password-reset-form__success">
-          <div className="password-reset-form__success-icon">
-            <LockOutlined />
-          </div>
-          <Title level={3} className="password-reset-form__success-title">
-            Check your email
-          </Title>
-          <Paragraph className="password-reset-form__success-subtitle">
-            We sent a password reset link to your email address.
-          </Paragraph>
-          <Button
-            type="link"
-            className="password-reset-form__back-link"
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate("/login")}
-          >
-            Back to login
-          </Button>
-        </div>
-      </Card>
+      <div className="password-reset-form">
+        <Result
+          status="success"
+          title="Check your email"
+          subTitle="We sent a password reset link to your email address."
+          extra={
+            <Button type="link" icon={<ArrowLeftOutlined />} onClick={() => navigate("/login")}>
+              Back to login
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
   return (
-    <Card className="password-reset-form__card" bordered={false}>
-
-      {/* Header */}
+    <div className="password-reset-form">
       <div className="password-reset-form__header">
-        <Title level={2} className="password-reset-form__title">
-          Reset your password
-        </Title>
+        <Title level={2} className="password-reset-form__title">Reset your password</Title>
         <Paragraph className="password-reset-form__subtitle">
-          Enter the email address associated with your account and we will send
-          you a link to reset your password.
+          Enter your email and we'll send you a link to reset your password.
         </Paragraph>
       </div>
 
-      {/* Form */}
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        requiredMark={false}
-        autoComplete="off"
-      >
-        <Form.Item
-          label="Email address"
-          name="email"
-          rules={[
-            { required: true, message: "Please enter your email address" },
-            { type: "email", message: "Please enter a valid email address" },
-          ]}
-        >
-          <Input
-            placeholder="alex.rivera@example.com"
-            size="large"
-          />
+      <Form form={form} layout="vertical" requiredMark={false} onFinish={handleSubmit} autoComplete="off">
+        <Form.Item label="Email address" name="email" rules={[
+          { required: true, message: "Please enter your email" },
+          { type: "email", message: "Please enter a valid email" },
+        ]}>
+          <Input prefix={<MailOutlined />} placeholder="alex.rivera@example.com" size="large" />
         </Form.Item>
 
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            size="large"
-            loading={loading}
-            block
-            className="password-reset-form__submit-btn"
-          >
+          <Button type="primary" htmlType="submit" size="large" loading={loading} block className="password-reset-form__submit-btn">
             Send reset link
           </Button>
         </Form.Item>
       </Form>
 
-      {/* Back to login */}
-      <div className="password-reset-form__back">
-        <Button
-          type="link"
-          className="password-reset-form__back-link"
-          icon={<ArrowLeftOutlined />}
-          onClick={() => navigate("/login")}
-        >
-          Back to login
-        </Button>
-      </div>
-
-    </Card>
+      <Button type="link" icon={<ArrowLeftOutlined />} onClick={() => navigate("/login")}>
+        Back to login
+      </Button>
+    </div>
   );
 };
 
