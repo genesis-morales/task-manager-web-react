@@ -27,7 +27,5 @@ dist-ssr
 *.sln
 *.sw?
 
-# Docs assets (mockups, images)
-docs/*.jpg
-docs/*.png
-docs/*.jpeg
+# Docs (local reference only)
+docs/
